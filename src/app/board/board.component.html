@@ -14,14 +14,24 @@
         (cdkDropListDropped)="drop($event)">
         @for (item of todo; track item) {
           <div class="drag-box " cdkDrag>
-            {{item}}
+            {{item.title}}
             <div>
                 <button class="pl-20" mat-icon-button aria-label="Example icon button with a vertical three dot icon">
                     <mat-icon>edit</mat-icon>
                 </button>
-                <button mat-icon-button aria-label="Example icon button with a vertical three dot icon">
+                <button mat-icon-button [matMenuTriggerFor]="menu">
                     <mat-icon>more_horiz</mat-icon>
                 </button>
+                <mat-menu #menu="matMenu">
+                    <button mat-menu-item>
+                      
+                      <span>Удалить</span>
+                    </button>
+                    <button mat-menu-item >
+                      <span>Дублировать задание</span>
+                    </button>
+                    
+                  </mat-menu>
             </div>
            
         </div>
@@ -43,14 +53,24 @@
             (cdkDropListDropped)="drop($event)">
                 @for (item of doing; track item) {
                 <div class="drag-box" cdkDrag>
-                    {{item}}
+                    {{item.title}}
                     <div>
                         <button class="pl-20" mat-icon-button aria-label="Example icon button with a vertical three dot icon">
                             <mat-icon>edit</mat-icon>
                         </button>
-                        <button mat-icon-button aria-label="Example icon button with a vertical three dot icon">
+                        <button mat-icon-button [matMenuTriggerFor]="menu">
                             <mat-icon>more_horiz</mat-icon>
                         </button>
+                        <mat-menu #menu="matMenu">
+                            <button mat-menu-item>
+                              
+                              <span>Удалить</span>
+                            </button>
+                            <button mat-menu-item>
+                              <span>Дублировать задание</span>
+                            </button>
+                            
+                          </mat-menu>
                     </div>
                 </div>
                 }
@@ -71,14 +91,24 @@
         (cdkDropListDropped)="drop($event)">
         @for (item of done; track item) {
           <div class="drag-box" cdkDrag>
-            {{item}}
+            {{item.title}}
             <div>
-                <button class="pl-20" mat-icon-button aria-label="Example icon button with a vertical three dot icon">
+                <button class="pl-20" mat-icon-button >
                     <mat-icon>edit</mat-icon>
                 </button>
-                <button mat-icon-button aria-label="Example icon button with a vertical three dot icon">
+                <button mat-icon-button [matMenuTriggerFor]="menu">
                     <mat-icon>more_horiz</mat-icon>
                 </button>
+                <mat-menu #menu="matMenu">
+                    <button mat-menu-item>
+                      
+                      <span>Удалить</span>
+                    </button>
+                    <button mat-menu-item >
+                      <span>Дублировать задание</span>
+                    </button>
+                    
+                  </mat-menu>
             </div>
         </div>
         }

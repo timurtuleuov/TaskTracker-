@@ -11,6 +11,7 @@ import {
   moveItemInArray,
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
+import { Task } from '../interface/task.interface';
 @Component({
   selector: 'app-board',
   standalone: true,
@@ -19,11 +20,11 @@ import {
   styleUrl: './board.component.scss'
 })
 export class BoardComponent {
-  todo = ['Get to work', 'Pick up groceries', 'Go home', 'Fall asleep'];
-  doing: string[] = []
-  done = ['Get up', 'Brush teeth', 'Take a shower', 'Check e-mail', 'Walk dog'];
+  todo: Task[] = [];
+  doing: Task[] = [];
+  done: Task[] = [];
 
-  drop(event: CdkDragDrop<string[]>) {
+  drop(event: CdkDragDrop<Task[]>) {
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
@@ -36,15 +37,24 @@ export class BoardComponent {
     }
   }
   addTask(status: string) {
+    const newTask: Task = {
+      title: 'New Task',
+      name: '',
+      deadline: '',
+      priority: '',
+      status: '',
+      executor: ''
+  };
     switch(status) {
         case 'todo':
-            this.todo.push('New Task');
+            
+            this.todo.push(newTask);
             break;
         case 'doing':
-            this.doing.push('New Task');
+            this.doing.push(newTask);
             break;
         case 'done':
-            this.done.push('New Task');
+            this.done.push(newTask);
             break;
         default:
             console.error('Invalid status provided');
