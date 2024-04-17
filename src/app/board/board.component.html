@@ -1,0 +1,87 @@
+<div cdkDropListGroup class="d-flex justify-content-center items-center"> 
+    <div class="drag-container">
+        <div class="d-flex justify-content-start ">
+            <h2>To do</h2>
+            <button (click)="addTask('todo')" mat-icon-button aria-label="Example icon button with a vertical three dot icon">
+                <mat-icon>add</mat-icon>
+            </button>
+        </div>
+      
+      <div
+        cdkDropList
+        [cdkDropListData]="todo"
+        class="drag-list"
+        (cdkDropListDropped)="drop($event)">
+        @for (item of todo; track item) {
+          <div class="drag-box " cdkDrag>
+            {{item}}
+            <div>
+                <button class="pl-20" mat-icon-button aria-label="Example icon button with a vertical three dot icon">
+                    <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button aria-label="Example icon button with a vertical three dot icon">
+                    <mat-icon>more_horiz</mat-icon>
+                </button>
+            </div>
+           
+        </div>
+        }
+      </div>
+    </div>
+    <div class="drag-container">
+        <div class="d-flex justify-content-start ">
+            <h2>Doing</h2>
+            <button (click)="addTask('doing')" mat-icon-button aria-label="Example icon button with a vertical three dot icon">
+                <mat-icon>add</mat-icon>
+            </button>
+        </div>
+
+        <div
+            cdkDropList
+            [cdkDropListData]="doing"
+            class="drag-list"
+            (cdkDropListDropped)="drop($event)">
+                @for (item of doing; track item) {
+                <div class="drag-box" cdkDrag>
+                    {{item}}
+                    <div>
+                        <button class="pl-20" mat-icon-button aria-label="Example icon button with a vertical three dot icon">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                        <button mat-icon-button aria-label="Example icon button with a vertical three dot icon">
+                            <mat-icon>more_horiz</mat-icon>
+                        </button>
+                    </div>
+                </div>
+                }
+            </div>
+        </div>
+    <div class="drag-container">
+        <div class="d-flex justify-content-start ">
+            <h2>Done</h2>
+            <button (click)="addTask('done')" mat-icon-button aria-label="Example icon button with a vertical three dot icon">
+                <mat-icon>add</mat-icon>
+            </button>
+        </div>
+  
+      <div
+        cdkDropList
+        [cdkDropListData]="done"
+        class="drag-list"
+        (cdkDropListDropped)="drop($event)">
+        @for (item of done; track item) {
+          <div class="drag-box" cdkDrag>
+            {{item}}
+            <div>
+                <button class="pl-20" mat-icon-button aria-label="Example icon button with a vertical three dot icon">
+                    <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button aria-label="Example icon button with a vertical three dot icon">
+                    <mat-icon>more_horiz</mat-icon>
+                </button>
+            </div>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
