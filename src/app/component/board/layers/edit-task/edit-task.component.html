@@ -3,18 +3,18 @@
 <h1 mat-dialog-title>Edit Task</h1>
 <div mat-dialog-content>
   <form class="d-flex flex-column">
-    
+      
       <label>Название таска</label>
       <mat-form-field>
         <mat-label>Input</mat-label>
-        <input matInput>
+        <input matInput [(ngModel)]="data.title" name="title">
       </mat-form-field>
 
 
       <label>Важность</label>
       <mat-form-field>
         <mat-label>Важность</mat-label>
-        <mat-select>
+        <mat-select [(ngModel)]="data.priority" name="priority">
           <mat-option value="1">1</mat-option>
           <mat-option value="2">2</mat-option>
           <mat-option value="3">3</mat-option>
@@ -27,7 +27,7 @@
       <label>Статус</label>
       <mat-form-field>
         <mat-label>Статус</mat-label>
-        <mat-select>
+        <mat-select [(ngModel)]="data.status" name="status">
           <mat-option value="todo">To DO</mat-option>
           <mat-option value="doing">Doing</mat-option>
           <mat-option value="done">Done</mat-option>
@@ -37,14 +37,14 @@
     
       <mat-form-field>
         <mat-label>Описание таски</mat-label>
-        <textarea matInput></textarea>
+        <textarea matInput [(ngModel)]="data.description" name="description"></textarea>
       </mat-form-field>
     
 
       <label>Исполнители</label>
       <mat-form-field>
         <mat-label>Исполнители</mat-label>
-        <mat-select>
+        <mat-select [(ngModel)]="data.executor" name="executor">
           <mat-option value="todo">Иван</mat-option>
           <mat-option value="doing">Сергей</mat-option>
         </mat-select>
@@ -52,7 +52,7 @@
 
       <mat-form-field>
         <mat-label>Choose a date</mat-label>
-        <input matInput [matDatepicker]="picker">
+        <input matInput [matDatepicker]="picker" [(ngModel)]="data.deadline" name="picker">
         <mat-hint>MM/DD/YYYY</mat-hint>
         <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>

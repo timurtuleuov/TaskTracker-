@@ -116,7 +116,7 @@ export class BoardComponent {
 
   editTask(task: Task) {
     const dialogRef = this.dialog.open(EditTaskComponent, {
-      data: task, // Pass the task object to the dialog
+      data: task, 
       height: '650px',
       width: '800px',
     });

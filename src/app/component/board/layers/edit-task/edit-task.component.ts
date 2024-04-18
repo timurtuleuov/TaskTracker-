@@ -12,6 +12,7 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { NgbModule, NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap';
+import { TaskService } from '../../../../service/task.service';
 
 @Component({
   selector: 'app-edit-task',
@@ -23,15 +24,16 @@ import { NgbModule, NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap';
 })
 export class EditTaskComponent {
   constructor(
+    public taskService: TaskService,
     public dialogRef: MatDialogRef<EditTaskDialog>,
     @Inject(MAT_DIALOG_DATA) public data: Task
   ) {}
-
   onCancelClick(): void {
     this.dialogRef.close();
   }
 
   onSaveClick(): void {
+    this.taskService.updateTask(this.data)
     // You can perform additional validation or processing here before closing the dialog
     this.dialogRef.close(this.data);
   }
