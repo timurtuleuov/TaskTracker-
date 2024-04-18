@@ -124,8 +124,18 @@ export class BoardComponent {
       console.log(`Dialog result: ${result}`);
     });
   }
+
   deleteTask(task: Task): void{
     this.taskService.deleteTask(task);
+  }
+
+  duplicateTask(taskToDuplicate: Task): void {
+    // Создаем копию задания
+    const duplicatedTask: Task = { ...taskToDuplicate };
+  
+    // Генерируем новый идентификатор
+    duplicatedTask.id = uuidv4();
+    this.taskService.addTask(duplicatedTask)
   }
 }
 

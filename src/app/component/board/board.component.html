@@ -27,7 +27,7 @@
                       
                       <span>Удалить</span>
                     </button>
-                    <button mat-menu-item >
+                    <button mat-menu-item (click)="duplicateTask(item)">
                       <span>Дублировать задание</span>
                     </button>
                     
@@ -55,7 +55,7 @@
                 <div class="drag-box" cdkDrag>
                     {{item.title}}
                     <div>
-                        <button class="pl-20" mat-icon-button aria-label="Example icon button with a vertical three dot icon">
+                        <button mat-icon-button class="pl-20" (click)="editTask(item)">
                             <mat-icon>edit</mat-icon>
                         </button>
                         <button mat-icon-button [matMenuTriggerFor]="menu">
@@ -66,7 +66,7 @@
                               
                               <span>Удалить</span>
                             </button>
-                            <button mat-menu-item>
+                            <button mat-menu-item (click)="duplicateTask(item)">
                               <span>Дублировать задание</span>
                             </button>
                             
@@ -93,7 +93,7 @@
           <div class="drag-box" cdkDrag>
             {{item.title}}
             <div>
-                <button class="pl-20" mat-icon-button >
+                <button class="pl-20" mat-icon-button  (click)="editTask(item)">
                     <mat-icon>edit</mat-icon>
                 </button>
                 <button mat-icon-button [matMenuTriggerFor]="menu">
@@ -104,7 +104,7 @@
                       
                       <span>Удалить</span>
                     </button>
-                    <button mat-menu-item >
+                    <button mat-menu-item (click)="duplicateTask(item)">
                       <span>Дублировать задание</span>
                     </button>
                     
