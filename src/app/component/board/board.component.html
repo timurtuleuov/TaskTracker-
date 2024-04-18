@@ -23,7 +23,7 @@
                     <mat-icon>more_horiz</mat-icon>
                 </button>
                 <mat-menu #menu="matMenu">
-                    <button mat-menu-item>
+                    <button mat-menu-item (click)="deleteTask(item)">
                       
                       <span>Удалить</span>
                     </button>
@@ -62,7 +62,7 @@
                             <mat-icon>more_horiz</mat-icon>
                         </button>
                         <mat-menu #menu="matMenu">
-                            <button mat-menu-item>
+                            <button mat-menu-item (click)="deleteTask(item)">
                               
                               <span>Удалить</span>
                             </button>
@@ -100,7 +100,7 @@
                     <mat-icon>more_horiz</mat-icon>
                 </button>
                 <mat-menu #menu="matMenu">
-                    <button mat-menu-item>
+                    <button mat-menu-item (click)="deleteTask(item)">
                       
                       <span>Удалить</span>
                     </button>

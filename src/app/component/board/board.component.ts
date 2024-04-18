@@ -21,7 +21,9 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
 import { TaskService } from '../../service/task.service';
 import { FormsModule } from '@angular/forms';
 import { EditTaskComponent } from './layers/edit-task/edit-task.component';
-
+import { Observable } from 'rxjs';
+import { TaskStatus } from '../../interface/task-status';
+import { v4 as uuidv4 } from 'uuid';
 @Component({
   selector: 'app-board',
   standalone: true,
@@ -30,15 +32,28 @@ import { EditTaskComponent } from './layers/edit-task/edit-task.component';
   styleUrl: './board.component.scss'
 })
 export class BoardComponent {
-  todo: Task[] = [];
-  doing: Task[] = [];
-  done: Task[] = [];
+  todo!: Task[];
+  doing!: Task[];
+  done!: Task[];
 
   constructor(private dialog: MatDialog, private taskService: TaskService){}
+
+  ngOnInit(): void {
+    this.taskService.getTasksByStatus(TaskStatus.Todo)
+      .subscribe(tasks => this.todo = tasks);
+
+    this.taskService.getTasksByStatus(TaskStatus.Doing)
+      .subscribe(tasks => this.doing = tasks);
+
+    this.taskService.getTasksByStatus(TaskStatus.Done)
+      .subscribe(tasks => this.done = tasks);
+  
+  }
 
   drop(event: CdkDragDrop<Task[]>) {
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+      
     } else {
       transferArrayItem(
         event.previousContainer.data,
@@ -46,27 +61,52 @@ export class BoardComponent {
         event.previousIndex,
         event.currentIndex,
       );
-    }
+      const task = event.item.data;
+      console.log(event.item.element)
+      const thisTask = JSON.parse(JSON.stringify(event.container.data[event.currentIndex]))
+      console.log(thisTask)
+      // Определяем новый статус на основе места, куда переместили задачу
+      if (event.container.id === 'cdk-drop-list-0') {
+        thisTask.status = TaskStatus.Todo;
+      } else if (event.container.id === 'cdk-drop-list-1') {
+        console.log('DOING')
+        thisTask.status = TaskStatus.Doing;
+      } else if (event.container.id === 'cdk-drop-list-2') {
+        thisTask.status = TaskStatus.Done;
+        console.log("HERE IS DONE")
+      }
+  
+      // Вызываем метод updateTask сервиса, который вернет Observable
+      this.taskService.updateTask(thisTask)
+      
+    
+  }
+    
   }
   addTask(status: string) {
     const newTask: Task = {
+      id: uuidv4(),
       title: 'New Task',
       description: '',
       deadline: '',
       priority: '',
-      status: '',
+      status: TaskStatus.Todo,
       executor: ''
   };
     switch(status) {
         case 'todo':
+          newTask.status = TaskStatus.Todo
+            this.taskService.addTask(newTask)
             
-            this.todo.push(newTask);
             break;
         case 'doing':
-            this.doing.push(newTask);
+          newTask.status = TaskStatus.Doing
+          this.taskService.addTask(newTask)
+          
             break;
         case 'done':
-            this.done.push(newTask);
+          newTask.status = TaskStatus.Done
+          this.taskService.addTask(newTask)
             break;
         default:
             console.error('Invalid status provided');
@@ -83,6 +123,9 @@ export class BoardComponent {
     dialogRef.afterClosed().subscribe(result => {
       console.log(`Dialog result: ${result}`);
     });
+  }
+  deleteTask(task: Task): void{
+    this.taskService.deleteTask(task);
   }
 }
 
