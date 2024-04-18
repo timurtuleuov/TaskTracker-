@@ -1,10 +1,10 @@
 <div class="card w-75">
     <div class="card-body">
-      <h5 class="card-title">{{task.title}}</h5>
-      <p class="card-text">{{task.description}}</p>
-      <p class="card-text">Начало: {{task.start| date:'fullDate'}}</p>
-      <p class="card-text">Дедлайн: {{task.deadline | date:'fullDate'}}</p>
-      <p class="card-text">Ответственный: {{task.executor}}</p>
+      <h5 class="card-title">{{task?.title}}</h5>
+      <p class="card-text">{{task?.description}}</p>
+      <p class="card-text">Начало: {{task?.start| date:'fullDate' | translate}}</p>
+      <p class="card-text">Дедлайн: {{task?.deadline | date:'fullDate' | translate}}</p>
+      <p class="card-text">Ответственный: {{task?.executor}}</p>
       <a href="#" class="btn btn-primary">Button</a>
     </div>
   </div>
