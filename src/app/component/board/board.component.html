@@ -16,7 +16,7 @@
           <div class="drag-box " cdkDrag>
             {{item.title}}
             <div>
-                <button class="pl-20" mat-icon-button aria-label="Example icon button with a vertical three dot icon">
+                <button class="pl-20" mat-icon-button (click)="editTask(item)">
                     <mat-icon>edit</mat-icon>
                 </button>
                 <button mat-icon-button [matMenuTriggerFor]="menu">

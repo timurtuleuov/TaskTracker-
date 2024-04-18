@@ -1,0 +1,67 @@
+
+
+<h1 mat-dialog-title>Edit Task</h1>
+<div mat-dialog-content>
+  <form class="d-flex flex-column">
+    
+      <label>Название таска</label>
+      <mat-form-field>
+        <mat-label>Input</mat-label>
+        <input matInput>
+      </mat-form-field>
+
+
+      <label>Важность</label>
+      <mat-form-field>
+        <mat-label>Важность</mat-label>
+        <mat-select>
+          <mat-option value="1">1</mat-option>
+          <mat-option value="2">2</mat-option>
+          <mat-option value="3">3</mat-option>
+          <mat-option value="4">4</mat-option>
+          <mat-option value="5">5</mat-option>
+        </mat-select>
+      </mat-form-field>
+      
+
+      <label>Статус</label>
+      <mat-form-field>
+        <mat-label>Статус</mat-label>
+        <mat-select>
+          <mat-option value="todo">To DO</mat-option>
+          <mat-option value="doing">Doing</mat-option>
+          <mat-option value="done">Done</mat-option>
+        </mat-select>
+      </mat-form-field>
+      
+    
+      <mat-form-field>
+        <mat-label>Описание таски</mat-label>
+        <textarea matInput></textarea>
+      </mat-form-field>
+    
+
+      <label>Исполнители</label>
+      <mat-form-field>
+        <mat-label>Исполнители</mat-label>
+        <mat-select>
+          <mat-option value="todo">Иван</mat-option>
+          <mat-option value="doing">Сергей</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Choose a date</mat-label>
+        <input matInput [matDatepicker]="picker">
+        <mat-hint>MM/DD/YYYY</mat-hint>
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+</form>
+      
+  
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onCancelClick()">Cancel</button>
+  <button mat-button color="primary" (click)="onSaveClick()" >Save</button>
+</div>

@@ -1,6 +1,6 @@
 export interface Task{
     title: string;
-    name: string;
+    description: string;
     deadline: string;
     priority: string;
     status: string;
