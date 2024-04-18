@@ -31,6 +31,11 @@ export class TaskService {
       map(tasks => tasks.filter(task => task.status === status))
     );
   }
+  getTaskById(id: string): Observable<Task | any> {
+    return this.tasks$.pipe(
+      map(tasks => tasks.find(task => task.id === id))
+    );
+  }
 
   addTask(newTask: Task): void {
     const tasks = this.getTasks();
