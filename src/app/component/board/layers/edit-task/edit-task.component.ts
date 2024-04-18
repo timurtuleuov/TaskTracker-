@@ -5,7 +5,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatButtonModule } from '@angular/material/button';
 import { MatNativeDateModule } from '@angular/material/core';
-import { FormsModule } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Task } from '../../../../interface/task.interface';
 import { EditTaskDialog } from '../../board.component';
 import { provideNativeDateAdapter } from '@angular/material/core';
@@ -18,11 +18,15 @@ import { TaskService } from '../../../../service/task.service';
   selector: 'app-edit-task',
   standalone: true,
   providers: [provideNativeDateAdapter()],
-  imports: [NgbModule, MatDialogModule, MatInputModule, MatNativeDateModule, MatButtonModule, MatFormFieldModule,  MatIconModule, MatSelectModule, MatDatepickerModule, NgbDatepickerModule, FormsModule],
+  imports: [NgbModule, MatDialogModule, MatInputModule, MatNativeDateModule, MatButtonModule, MatFormFieldModule, ReactiveFormsModule, MatIconModule, MatSelectModule, MatDatepickerModule, NgbDatepickerModule, FormsModule],
   templateUrl: './edit-task.component.html',
   styleUrl: './edit-task.component.scss'
 })
 export class EditTaskComponent {
+  range = new FormGroup({
+    start: new FormControl<Date | null>(null),
+    end: new FormControl<Date | null>(null),
+  });
   constructor(
     public taskService: TaskService,
     public dialogRef: MatDialogRef<EditTaskDialog>,

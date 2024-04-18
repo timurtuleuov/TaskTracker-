@@ -12,19 +12,18 @@ export class TaskService {
 
   constructor() {}
 
-  private getTasks(): Task[] {
+  getTasks(): Task[] {
     if (typeof localStorage !== 'undefined') {
       const tasksString = localStorage.getItem(this.localStorageKey);
       return tasksString ? JSON.parse(tasksString) : [];
     } else {
-      // Если localStorage недоступен, вернуть пустой массив или выполнить другие действия по умолчанию
       return [];
     }
   }
 
   private saveTasks(tasks: Task[]): void {
     localStorage.setItem(this.localStorageKey, JSON.stringify(tasks));
-    this.tasks$.next(tasks); // Обновляем поток данных
+    this.tasks$.next(tasks); 
   }
 
   getTasksByStatus(status: TaskStatus): Observable<Task[]> {
@@ -39,19 +38,14 @@ export class TaskService {
     this.saveTasks(tasks);
   }
 
-  // Остальные методы для обновления и удаления тасков
-
-
-  // Удалить таск
   deleteTask(taskToDelete: Task): void {
     let tasks = this.getTasks();
     tasks = tasks.filter(task => task.id !== taskToDelete.id);
     this.saveTasks(tasks);
   }
   
-  // Обновить таск
   updateTask(updatedTask: Task): void {
-    if (updatedTask) { // Проверяем, что updatedTask не является undefined или null
+    if (updatedTask) { 
       let tasks = this.getTasks();
       tasks = tasks.map(task => (task.id === updatedTask.id ? updatedTask : task));
       this.saveTasks(tasks);

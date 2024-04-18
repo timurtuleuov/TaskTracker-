@@ -1,1 +1,7 @@
-<p>timeline works!</p>
+<ngx-gantt #gantt [items]="items">
+    <ngx-gantt-table>
+      <ngx-gantt-column name="gant" width="300px">
+        <ng-template #cell let-item="item"> {{ item.title }} </ng-template>
+      </ngx-gantt-column>
+    </ngx-gantt-table>
+  </ngx-gantt>

@@ -88,6 +88,7 @@ export class BoardComponent {
       id: uuidv4(),
       title: 'New Task',
       description: '',
+      start: '',
       deadline: '',
       priority: '',
       status: TaskStatus.Todo,
