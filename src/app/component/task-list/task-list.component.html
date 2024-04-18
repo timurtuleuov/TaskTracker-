@@ -1,1 +1,88 @@
-<p>task-list works!</p>
+
+<div class="d-flex justify-content-center align-items-center">
+    <mat-form-field >
+        <mat-label>Filter</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Mia" #input>
+    
+        
+      </mat-form-field>
+      <button class="btn btn-primary" (click)="addTask()">Добавить задачу</button>
+</div>
+  
+  <div class="d-flex flex-column justify-content-center align-items-center w-100" >
+    <table mat-table [dataSource]="dataSource" matSort>
+  
+
+  
+      <ng-container matColumnDef="title">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Таск </th>
+        <td mat-cell *matCellDef="let row"> {{row.title}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="description">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Описание </th>
+        <td mat-cell *matCellDef="let row"> {{row.description}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="start">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Начало</th>
+        <td mat-cell *matCellDef="let row"> {{row.start| date:'fullDate' | translate}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="deadline">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Дедлайн </th>
+        <td mat-cell *matCellDef="let row"> {{row.deadline| date:'fullDate' | translate}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="priority">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Приоритет </th>
+        <td mat-cell *matCellDef="let row"> {{row.priority}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Статус </th>
+        <td mat-cell *matCellDef="let row">
+          <ng-container *ngIf="row.status === 'todo'">Нужно сделать</ng-container>
+          <ng-container *ngIf="row.status === 'doing'">В процессе</ng-container>
+          <ng-container *ngIf="row.status === 'done'">Сделано</ng-container>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="executor">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Исполнитель </th>
+        <td mat-cell *matCellDef="let row"> {{row.executor}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="operation">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Действие </th>
+        <td mat-cell *matCellDef="let row"> 
+            <button mat-icon-button [matMenuTriggerFor]="menu">
+                <mat-icon>more_horiz</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+                <button mat-menu-item (click)="deleteTask(row)">
+                  
+                  <span>Удалить</span>
+                </button>
+                <button mat-menu-item (click)="duplicateTask(row)">
+                  <span>Дублировать задание</span>
+                </button>
+                <button mat-menu-item [routerLink]="['/task/', row.id]">
+                  <span>Открыть</span>
+                </button>
+              </mat-menu>
+        </td>
+      </ng-container>
+  
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
+      </tr>
+    </table>
+  
+    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator>
+  </div>
+  
+  

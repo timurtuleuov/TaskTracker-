@@ -66,7 +66,7 @@ export class BoardComponent {
       console.log(event.item.element)
       const thisTask = JSON.parse(JSON.stringify(event.container.data[event.currentIndex]))
       console.log(thisTask)
-      // Определяем новый статус на основе места, куда переместили задачу
+
       if (event.container.id === 'cdk-drop-list-0') {
         thisTask.status = TaskStatus.Todo;
       } else if (event.container.id === 'cdk-drop-list-1') {
@@ -77,7 +77,6 @@ export class BoardComponent {
         console.log("HERE IS DONE")
       }
   
-      // Вызываем метод updateTask сервиса, который вернет Observable
       this.taskService.updateTask(thisTask)
       
     
@@ -132,10 +131,8 @@ export class BoardComponent {
   }
 
   duplicateTask(taskToDuplicate: Task): void {
-    // Создаем копию задания
     const duplicatedTask: Task = { ...taskToDuplicate };
   
-    // Генерируем новый идентификатор
     duplicatedTask.id = uuidv4();
     this.taskService.addTask(duplicatedTask)
   }
@@ -159,7 +156,6 @@ export class EditTaskDialog {
   }
 
   onSaveClick(): void {
-    // You can perform additional validation or processing here before closing the dialog
     this.dialogRef.close(this.data);
   }
 }
