@@ -24,10 +24,11 @@ import { EditTaskComponent } from './layers/edit-task/edit-task.component';
 import { Observable } from 'rxjs';
 import { TaskStatus } from '../../interface/task-status';
 import { v4 as uuidv4 } from 'uuid';
+import {RouterModule} from '@angular/router';
 @Component({
   selector: 'app-board',
   standalone: true,
-  imports: [CdkDropListGroup, CdkDropList, CdkDrag, NgbModule, MatIconModule, MatButtonModule, MatMenuModule, MatDialogModule],
+  imports: [CdkDropListGroup, CdkDropList, CdkDrag, NgbModule, MatIconModule, MatButtonModule, MatMenuModule, MatDialogModule, RouterModule],
   templateUrl: './board.component.html',
   styleUrl: './board.component.scss'
 })

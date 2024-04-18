@@ -30,7 +30,9 @@
                     <button mat-menu-item (click)="duplicateTask(item)">
                       <span>Дублировать задание</span>
                     </button>
-                    
+                    <button mat-menu-item [routerLink]="['/task/', item.id]">
+                      <span>Открыть</span>
+                    </button>
                   </mat-menu>
             </div>
            
@@ -69,7 +71,9 @@
                             <button mat-menu-item (click)="duplicateTask(item)">
                               <span>Дублировать задание</span>
                             </button>
-                            
+                            <button mat-menu-item [routerLink]="['/task/', item.id]">
+                              <span>Открыть</span>
+                            </button>
                           </mat-menu>
                     </div>
                 </div>
@@ -106,6 +110,9 @@
                     </button>
                     <button mat-menu-item (click)="duplicateTask(item)">
                       <span>Дублировать задание</span>
+                    </button>
+                    <button mat-menu-item [routerLink]="['/task/', item.id]">
+                      <span>Открыть</span>
                     </button>
                     
                   </mat-menu>

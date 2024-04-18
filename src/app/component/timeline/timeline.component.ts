@@ -23,9 +23,9 @@ import { GanttViewCustom } from './custom-day-view';
       provide: GANTT_GLOBAL_CONFIG,
       useValue: {
         dateFormat: {
-          yearQuarter: `QQQ 'of' yyyy`,
+        yearQuarter: `QQQQ 'of' yyyy`,
           month: 'LLLL',
-          yearMonth: `LLLL yyyy'(week' w ')'`
+          yearMonth: `LLLL yyyy'(week' w ')'`,
         },
         dateOptions: {
           locale: fr,
