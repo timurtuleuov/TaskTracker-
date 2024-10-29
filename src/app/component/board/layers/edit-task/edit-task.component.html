@@ -2,7 +2,7 @@
 
 <h1 mat-dialog-title>Edit Task</h1>
 <div mat-dialog-content>
-  <form class="d-flex flex-column">
+  <form class="d-flex flex-column" (keydown.enter)="onSaveClick()" (keyup.esc)="onCancelClick()">
       
       <label>Название таска</label>
       <mat-form-field>
@@ -40,16 +40,6 @@
         <textarea matInput [(ngModel)]="data.description" name="description"></textarea>
       </mat-form-field>
     
-
-      <label>Исполнители</label>
-      <mat-form-field>
-        <mat-label>Исполнители</mat-label>
-        <mat-select [(ngModel)]="data.executor" name="executor">
-          <mat-option value="Иван">Иван</mat-option>
-          <mat-option value="Сергей">Сергей</mat-option>
-        </mat-select>
-      </mat-form-field>
-
       <!-- <mat-form-field>
         <mat-label>Choose a date</mat-label>
         <input matInput [matDatepicker]="picker" [(ngModel)]="data.deadline" name="picker">

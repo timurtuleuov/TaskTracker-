@@ -66,6 +66,7 @@ export class BoardComponent {
       console.log(event.item.element)
       const thisTask = JSON.parse(JSON.stringify(event.container.data[event.currentIndex]))
       console.log(thisTask)
+      console.log("id контейнера",event.container.id)
 
       if (event.container.id === 'cdk-drop-list-0') {
         thisTask.status = TaskStatus.Todo;
@@ -113,6 +114,7 @@ export class BoardComponent {
             console.error('Invalid status provided');
             break;
     }
+    this.editTask(newTask);
   }
 
   editTask(task: Task) {
