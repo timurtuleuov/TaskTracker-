@@ -16,6 +16,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { EditTaskComponent } from '../board/layers/edit-task/edit-task.component';
 import { TaskStatus } from '../../interface/task-status';
 import { v4 as uuidv4 } from 'uuid';
+import { DarkModeService } from '../../service/darkMode/dark-mode.service';
 @Component({
   selector: 'app-task-list',
   standalone: true,
@@ -27,13 +28,14 @@ import { v4 as uuidv4 } from 'uuid';
 export class TaskListComponent implements OnInit{
   task: Task[] = []
 
-  constructor(private taskService: TaskService, private dialog: MatDialog){
+  constructor(private taskService: TaskService, private dialog: MatDialog, private darkModeService: DarkModeService){
     
   }
 
   ngOnInit(): void {
     this.task = this.taskService.getTasks()
     this.dataSource = new MatTableDataSource(this.task);
+    this.darkModeService.initTheme();
   }
   displayedColumns: string[] = ['title', 'description', 'start', 'deadline', 'priority', 'status', 'executor', 'operation'];
   dataSource!: MatTableDataSource<Task>;

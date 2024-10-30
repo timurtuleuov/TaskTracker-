@@ -25,6 +25,7 @@ import { Observable } from 'rxjs';
 import { TaskStatus } from '../../interface/task-status';
 import { v4 as uuidv4 } from 'uuid';
 import {RouterModule} from '@angular/router';
+import { DarkModeService } from '../../service/darkMode/dark-mode.service';
 @Component({
   selector: 'app-board',
   standalone: true,
@@ -37,9 +38,10 @@ export class BoardComponent {
   doing!: Task[];
   done!: Task[];
 
-  constructor(private dialog: MatDialog, private taskService: TaskService){}
+  constructor(private dialog: MatDialog, private taskService: TaskService, private darkModeService: DarkModeService){}
 
   ngOnInit(): void {
+    this.darkModeService.initTheme();
     this.taskService.getTasksByStatus(TaskStatus.Todo)
       .subscribe(tasks => this.todo = tasks);
 

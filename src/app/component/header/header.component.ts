@@ -18,6 +18,7 @@ export class HeaderComponent {
 
   constructor(private modalService: NgbModal, private darkModeService: DarkModeService){
     this.isDarkMode = this.darkModeService.isDarkMode();
+    
   }
 
   toggleTheme(event: any): void {
