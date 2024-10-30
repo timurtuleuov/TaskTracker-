@@ -1,5 +1,5 @@
-<div cdkDropListGroup class="d-flex justify-content-center"> 
-    <div class="drag-container">
+<div cdkDropListGroup class="d-flex justify-content-center h-screen dark:bg-gray-900 dark:text-white"> 
+    <div class="drag-container dark:bg-gray-900 dark:text-white">
       <div class="flex flex-row justify-start">
             <p class="text-4xl leading-tight">To Do</p>
             <button (click)="addTask('todo')" mat-icon-button aria-label="Example icon button with a vertical three dot icon">
@@ -13,7 +13,7 @@
         class="drag-list"
         (cdkDropListDropped)="drop($event)">
         @for (item of todo; track item) {
-          <div class="drag-box " cdkDrag>
+          <div class="drag-box dark:bg-gray-700 dark:text-white" cdkDrag>
             {{item.title}}
             <div>
                 <button class="pl-20" mat-icon-button (click)="editTask(item)">
