@@ -1,7 +1,7 @@
-<div cdkDropListGroup class="d-flex justify-content-center items-center"> 
+<div cdkDropListGroup class="d-flex justify-content-center"> 
     <div class="drag-container">
       <div class="flex flex-row justify-start">
-            <p class="text-5xl leading-tight">To Do</p>
+            <p class="text-4xl leading-tight">To Do</p>
             <button (click)="addTask('todo')" mat-icon-button aria-label="Example icon button with a vertical three dot icon">
                 <mat-icon>add</mat-icon>
             </button>
@@ -41,8 +41,8 @@
       </div>
     </div>
     <div class="drag-container">
-        <div class="d-flex justify-content-start ">
-            <h2>Doing</h2>
+      <div class="flex flex-row justify-start">
+        <p class="text-4xl leading-tight">Doing</p>
             <button (click)="addTask('doing')" mat-icon-button aria-label="Example icon button with a vertical three dot icon">
                 <mat-icon>add</mat-icon>
             </button>
@@ -81,8 +81,8 @@
             </div>
         </div>
     <div class="drag-container">
-        <div class="d-flex justify-content-start ">
-            <h2>Done</h2>
+      <div class="flex flex-row justify-start">
+        <p class="text-4xl leading-tight">Done</p>
             <button (click)="addTask('done')" mat-icon-button aria-label="Example icon button with a vertical three dot icon">
                 <mat-icon>add</mat-icon>
             </button>
@@ -122,3 +122,5 @@
       </div>
     </div>
   </div>
+
+  
