@@ -33,9 +33,10 @@ export class TaskListComponent implements OnInit{
   }
 
   ngOnInit(): void {
+    this.darkModeService.initTheme();
     this.task = this.taskService.getTasks()
     this.dataSource = new MatTableDataSource(this.task);
-    this.darkModeService.initTheme();
+    
   }
   displayedColumns: string[] = ['title', 'description', 'start', 'deadline', 'priority', 'status', 'executor', 'operation'];
   dataSource!: MatTableDataSource<Task>;
