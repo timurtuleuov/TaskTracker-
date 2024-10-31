@@ -1,4 +1,4 @@
-<div cdkDropListGroup class="d-flex justify-content-center h-screen dark:bg-gray-900 dark:text-white"> 
+<div cdkDropListGroup class="flex justify-content-center h-fit dark:bg-gray-900 dark:text-white pb-24"> 
     <div class="drag-container dark:bg-gray-900 dark:text-white">
       <div class="flex flex-row justify-start">
             <p class="text-4xl leading-tight">To Do</p>
@@ -10,7 +10,7 @@
       <div
         cdkDropList
         [cdkDropListData]="todo"
-        class="drag-list dark:bg-gray-700 dark:text-white" 
+        class="drag-list dark:bg-gray-700 dark:text-white max-h-96 overflow-y-auto" 
         (cdkDropListDropped)="drop($event)">
         @for (item of todo; track item) {
           <div class="drag-box flex justify-between items-center p-2" cdkDrag>
