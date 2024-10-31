@@ -82,7 +82,7 @@ export class BoardComponent {
   // Method called when the board is changed
   onBoardChange(boardId: string): void {
     this.selectedBoard = boardId;
-    this.loadTasks(); // Reload tasks based on the new selected board
+    this.loadTasks(); // Перезагружает задачи для нового выбранного борда
   }
 
   drop(event: CdkDragDrop<Task[]>) {
@@ -163,6 +163,7 @@ export class BoardComponent {
     duplicatedTask.id = uuidv4();
     this.taskService.addTask(duplicatedTask);
   }
+  
 }
 
 @Component({

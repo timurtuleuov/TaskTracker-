@@ -21,7 +21,7 @@ import { DarkModeService } from '../../service/darkMode/dark-mode.service';
   selector: 'app-task-list',
   standalone: true,
   providers: [DatePipe, TranslatePipe],
-  imports: [CommonModule, MatFormFieldModule, MatInputModule, MatTableModule, MatSortModule, MatPaginatorModule, TranslatePipe, MatInputModule, MatIconModule, MatButtonModule, MatMenuModule, MatDialogModule, RouterModule],
+  imports: [CommonModule, MatFormFieldModule, MatInputModule, MatTableModule, MatSortModule, MatPaginatorModule, TranslatePipe, MatIconModule, MatButtonModule, MatMenuModule, MatDialogModule, RouterModule],
   templateUrl: './task-list.component.html',
   styleUrl: './task-list.component.scss'
 })
