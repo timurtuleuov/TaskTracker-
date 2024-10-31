@@ -10,7 +10,9 @@ export class TaskThemeService {
   private readonly localStorageKey = 'taskThemes';
   private themes$: BehaviorSubject<TaskTheme[]> = new BehaviorSubject<TaskTheme[]>(this.getThemes());
 
-  constructor() {}
+  constructor() {
+    this.getOrCreateDefaultTheme();
+  }
 
   private getThemes(): TaskTheme[] {
     const themesString = localStorage.getItem(this.localStorageKey);
@@ -43,40 +45,13 @@ export class TaskThemeService {
     themes = themes.map(theme => (theme.id === updatedTheme.id ? updatedTheme : theme));
     this.saveThemes(themes);
   }
-
-  addTaskToTheme(themeId: string, task: Task): void {
-    const themes = this.getThemes();
-    const theme = themes.find(t => t.id === themeId);
-    if (theme) {
-      theme.tasks.push(task);
-      this.saveThemes(themes);
+  getOrCreateDefaultTheme(): TaskTheme {
+    let themes = this.getThemes();
+    let defaultTheme = themes.find(theme => theme.title === 'Без темы');
+    if (!defaultTheme) {
+      defaultTheme = { id: 'default', title: 'Без темы' };
+      this.addTheme(defaultTheme);
     }
-  }
-
-  deleteTaskFromTheme(themeId: string, taskId: string): void {
-    const themes = this.getThemes();
-    const theme = themes.find(t => t.id === themeId);
-    if (theme) {
-      theme.tasks = theme.tasks.filter(task => task.id !== taskId);
-      this.saveThemes(themes);
-    }
-  }
-
-  updateTaskInTheme(themeId: string, updatedTask: Task): void {
-    const themes = this.getThemes();
-    const theme = themes.find(t => t.id === themeId);
-    if (theme) {
-      theme.tasks = theme.tasks.map(task => (task.id === updatedTask.id ? updatedTask : task));
-      this.saveThemes(themes);
-    }
-  }
-
-  getTasksFromTheme(themeId: string): Observable<Task[]> {
-    return this.themes$.pipe(
-      map((themes) => {
-        const theme = themes.find(t => t.id === themeId);
-        return theme ? theme.tasks : [];
-      })
-    );
+    return defaultTheme;
   }
 }

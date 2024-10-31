@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Task } from '../interface/task.interface';
 import { BehaviorSubject, Observable, map } from 'rxjs';
 import { TaskStatus } from '../interface/task-status';
+import { TaskThemeService } from './taskTheme/task-theme.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,7 @@ export class TaskService {
   private readonly localStorageKey = 'tasks';
   private tasks$: BehaviorSubject<Task[]> = new BehaviorSubject<Task[]>(this.getTasks());
 
-  constructor() {}
+  constructor(private taskThemeService: TaskThemeService) {}
 
   getTasks(): Task[] {
     if (typeof localStorage !== 'undefined') {
@@ -36,8 +37,15 @@ export class TaskService {
       map(tasks => tasks.find(task => task.id === id))
     );
   }
-
+  getTasksByBoard(boardId: string): Observable<Task[]> {
+    return this.tasks$.pipe(
+      map(tasks => tasks.filter(task => task.board && task.board.id === boardId))
+    );
+  }
   addTask(newTask: Task): void {
+    if (!newTask.board) {
+      newTask.board = this.taskThemeService.getOrCreateDefaultTheme(); // Assign default theme if undefined
+    }
     const tasks = this.getTasks();
     tasks.push(newTask);
     this.saveTasks(tasks);

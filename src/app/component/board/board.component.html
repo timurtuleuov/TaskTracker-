@@ -1,4 +1,18 @@
+
+    <!-- Chosing board -->
+    <div class="flex justify-content-center h-fit dark:bg-gray-900 dark:text-white">
+      <mat-form-field>
+        <mat-label>Boards</mat-label>
+        <mat-select [(value)]="selectedBoard">
+          <mat-option></mat-option>
+          @for (option of boards; track option) {
+            <mat-option [value]="option.id">{{ option.title }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
 <div cdkDropListGroup class="flex justify-content-center h-fit dark:bg-gray-900 dark:text-white pb-24"> 
+
     <div class="drag-container dark:bg-gray-900 dark:text-white">
       <div class="flex flex-row justify-start">
             <p class="text-4xl leading-tight">To Do</p>

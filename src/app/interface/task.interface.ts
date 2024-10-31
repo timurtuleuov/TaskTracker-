@@ -1,4 +1,5 @@
 import { TaskStatus } from "./task-status";
+import { TaskTheme } from "./task-theme.interface";
 
 export interface Task{
     id: string,
@@ -9,4 +10,5 @@ export interface Task{
     priority: string;
     status: TaskStatus;
     executor: string;
+    board?: TaskTheme;
 }
