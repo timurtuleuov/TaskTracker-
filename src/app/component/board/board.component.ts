@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
@@ -36,7 +36,7 @@ import { TaskThemeService } from '../../service/taskTheme/task-theme.service';
   templateUrl: './board.component.html',
   styleUrl: './board.component.scss'
 })
-export class BoardComponent {
+export class BoardComponent implements OnInit, AfterViewInit {
   todo!: Task[];
   doing!: Task[];
   done!: Task[];
@@ -48,12 +48,12 @@ export class BoardComponent {
     private dialog: MatDialog, 
     private taskService: TaskService, 
     private darkModeService: DarkModeService, 
-    private taskThemeService: TaskThemeService
+    private taskThemeService: TaskThemeService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.darkModeService.initTheme();
-    this.loadTasks(); // Load tasks based on the selected board on init
 
     // Load boards
     this.taskThemeService.getAllThemes().subscribe(
@@ -61,31 +61,39 @@ export class BoardComponent {
     );
   }
 
+  ngAfterViewInit(): void {
+    // Load tasks after view is initialized
+    this.loadTasks();
+  }
+
   loadTasks(): void {
     const boardId = this.selectedBoard === "Без темы" ? null : this.selectedBoard;
 
     if (boardId) {
-      // Filter tasks by selected board
       this.taskService.getTasksByBoard(boardId).subscribe(tasks => {
         this.todo = tasks.filter(task => task.status === TaskStatus.Todo);
         this.doing = tasks.filter(task => task.status === TaskStatus.Doing);
         this.done = tasks.filter(task => task.status === TaskStatus.Done);
+        
+        // Detect changes after data loading
+        this.cdr.detectChanges();
       });
     } else {
-      // Get all tasks if no board is selected
       this.taskService.getTasksByStatus(TaskStatus.Todo).subscribe(tasks => this.todo = tasks);
       this.taskService.getTasksByStatus(TaskStatus.Doing).subscribe(tasks => this.doing = tasks);
       this.taskService.getTasksByStatus(TaskStatus.Done).subscribe(tasks => this.done = tasks);
+      
+      // Detect changes after loading all tasks
+      this.cdr.detectChanges();
     }
   }
 
-  // Method called when the board is changed
   onBoardChange(boardId: string): void {
     this.selectedBoard = boardId;
-    this.loadTasks(); // Перезагружает задачи для нового выбранного борда
+    this.loadTasks(); // Reload tasks for the new selected board
   }
 
-  drop(event: CdkDragDrop<Task[]>) {
+  drop(event: CdkDragDrop<Task[]>): void {
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
@@ -96,8 +104,9 @@ export class BoardComponent {
         event.currentIndex,
       );
 
-      const thisTask = JSON.parse(JSON.stringify(event.container.data[event.currentIndex]));
+      const thisTask = { ...event.container.data[event.currentIndex] };
 
+      // Update task status based on drop container
       if (event.container.id === 'cdk-drop-list-0') {
         thisTask.status = TaskStatus.Todo;
       } else if (event.container.id === 'cdk-drop-list-1') {
@@ -110,7 +119,7 @@ export class BoardComponent {
     }
   }
 
-  addTask(status: string) {
+  addTask(status: string): void {
     const newTask: Task = {
       id: uuidv4(),
       title: 'New Task',
@@ -120,7 +129,7 @@ export class BoardComponent {
       priority: '',
       status: TaskStatus.Todo,
       executor: '',
-      board: this.selectedBoard === "Без темы" ? undefined : { id: this.selectedBoard, title: '' } // Assign board if one is selected
+      board: this.selectedBoard === "Без темы" ? undefined : { id: this.selectedBoard, title: '' }
     };
 
     switch (status) {
@@ -143,7 +152,7 @@ export class BoardComponent {
     this.editTask(newTask);
   }
 
-  editTask(task: Task) {
+  editTask(task: Task): void {
     const dialogRef = this.dialog.open(EditTaskComponent, {
       data: task,
       height: '650px',
@@ -163,7 +172,6 @@ export class BoardComponent {
     duplicatedTask.id = uuidv4();
     this.taskService.addTask(duplicatedTask);
   }
-  
 }
 
 @Component({
