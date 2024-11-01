@@ -196,10 +196,16 @@ export class BoardComponent implements OnInit, AfterViewInit {
   }
 
   //shortcuts
-  @HostListener('window:keydown.control.b', ['$event'])
-  createNewDoingTask(event: KeyboardEvent){
-    this.addTask('doing')
+  @HostListener('window:keydown', ['$event'])
+  createNewDoingTask(event: KeyboardEvent) {
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'b' || (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'и') {
+      event.preventDefault(); // Предотвращаем стандартное поведение
+      this.addTask('doing');
+    }
   }
+  
+
+
 }
 @Component({
   selector: 'edit-task',
