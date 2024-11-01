@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, HostListener, Inject, OnInit } from '@angular/core';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
@@ -171,6 +171,12 @@ export class BoardComponent implements OnInit, AfterViewInit {
     const duplicatedTask: Task = { ...taskToDuplicate };
     duplicatedTask.id = uuidv4();
     this.taskService.addTask(duplicatedTask);
+  }
+
+  //shortcuts
+  @HostListener('window:keydown.control.b', ['$event'])
+  createNewDoingTask(event: KeyboardEvent){
+    this.addTask('doing')
   }
 }
 
