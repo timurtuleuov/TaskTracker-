@@ -5,7 +5,7 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatMenuModule} from '@angular/material/menu';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSelectModule} from '@angular/material/select';
-import {provideNativeDateAdapter} from '@angular/material/core';
+import {MatNativeDateModule, provideNativeDateAdapter} from '@angular/material/core';
 import {MatInputModule} from '@angular/material/input';
 import { NgbCalendar, NgbDatepickerModule, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import {
@@ -20,7 +20,7 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angu
 import { Task } from '../../interface/task.interface';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import { TaskService } from '../../service/task.service';
-import { FormsModule } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { EditTaskComponent } from './layers/edit-task/edit-task.component';
 import { Observable } from 'rxjs';
 import { TaskStatus } from '../../interface/task-status';
@@ -153,13 +153,23 @@ export class BoardComponent implements OnInit, AfterViewInit {
   }
 
   editTask(task: Task): void {
-    const dialogRef = this.dialog.open(EditTaskComponent, {
-      data: task,
+    // Создаем копию задачи
+    const taskCopy = { ...task };
+  
+    const dialogRef = this.dialog.open(EditTaskDialog, {
+      data: taskCopy,
       height: '650px',
       width: '800px',
     });
+  
     dialogRef.afterClosed().subscribe(result => {
-      console.log(`Dialog result: ${result}`);
+      if (result) {
+        // Если пользователь нажал "Сохранить", обновляем задачу
+        this.taskService.updateTask(result);
+      } else {
+        // Если пользователь нажал "Отмена", ничего не сохраняем
+        console.log('Изменения отменены');
+      }
     });
   }
 
@@ -179,7 +189,6 @@ export class BoardComponent implements OnInit, AfterViewInit {
     this.addTask('doing')
   }
 }
-
 @Component({
   selector: 'edit-task',
   templateUrl: 'edit-task.html',
@@ -188,16 +197,22 @@ export class BoardComponent implements OnInit, AfterViewInit {
   imports: [NgbModule, MatDialogModule, MatButtonModule, MatFormFieldModule,  MatIconModule, MatSelectModule, MatDatepickerModule, NgbDatepickerModule, FormsModule],
 })
 export class EditTaskDialog {
+  range = new FormGroup({
+    start: new FormControl<Date | null>(null),
+    end: new FormControl<Date | null>(null),
+  });
   constructor(
+    public taskService: TaskService,
     public dialogRef: MatDialogRef<EditTaskDialog>,
     @Inject(MAT_DIALOG_DATA) public data: Task
   ) {}
-
   onCancelClick(): void {
     this.dialogRef.close();
   }
 
   onSaveClick(): void {
+    this.taskService.updateTask(this.data)
+    // You can perform additional validation or processing here before closing the dialog
     this.dialogRef.close(this.data);
   }
 }
