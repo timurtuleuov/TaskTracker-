@@ -135,28 +135,40 @@ export class BoardComponent implements OnInit, AfterViewInit {
     switch (status) {
       case 'todo':
         newTask.status = TaskStatus.Todo;
-        this.taskService.addTask(newTask);
         break;
       case 'doing':
         newTask.status = TaskStatus.Doing;
-        this.taskService.addTask(newTask);
         break;
       case 'done':
         newTask.status = TaskStatus.Done;
-        this.taskService.addTask(newTask);
         break;
       default:
         console.error('Invalid status provided');
-        break;
+        return;
     }
-    this.editTask(newTask);
+  
+    // Open edit dialog with the new task
+    const dialogRef = this.dialog.open(EditTaskComponent, {
+      data: newTask,
+      height: '650px',
+      width: '800px',
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // If user clicks "Save," add the task
+        this.taskService.addTask(result);
+      } else {
+        console.log('Task creation canceled');
+      }
+    });
   }
 
   editTask(task: Task): void {
     // Создаем копию задачи
     const taskCopy = { ...task };
   
-    const dialogRef = this.dialog.open(EditTaskDialog, {
+    const dialogRef = this.dialog.open(EditTaskComponent, {
       data: taskCopy,
       height: '650px',
       width: '800px',
