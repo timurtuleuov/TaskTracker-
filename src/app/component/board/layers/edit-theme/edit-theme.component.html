@@ -1,0 +1,21 @@
+
+
+<h1 mat-dialog-title class="dark:bg-gray-600 dark:text-white"><p class="dark:text-white">Редактировть доску</p></h1>
+<div mat-dialog-content class="dark:bg-gray-600 dark:text-white">
+  <form class="d-flex flex-column" (keydown.enter)="onSaveClick()" (keyup.esc)="onCancelClick()">
+      
+      <label class="dark:bg-gray-600 dark:text-white">Название доски</label>
+      <mat-form-field class="dark:bg-gray-600 dark:text-white">
+        <mat-label>Theme</mat-label>
+        <input matInput [(ngModel)]="data.title" name="title" >
+      </mat-form-field>
+
+
+</form>
+      
+  
+</div>
+<div mat-dialog-actions class="dark:bg-gray-600 dark:text-white">
+  <button mat-button (click)="onCancelClick()"><p class="dark:text-white">Отмена</p></button>
+  <button mat-flat-button color="primary" (click)="onSaveClick()" >Сохранить</button>
+</div>
