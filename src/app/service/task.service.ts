@@ -66,4 +66,9 @@ export class TaskService {
       console.error('Cannot update task: updatedTask is undefined');
     }
   }
+
+  deleteTasksByBoard(boardId: string): void {
+    const tasks = this.getTasks().filter(task => !task.board || task.board.id !== boardId);
+    this.saveTasks(tasks);
+  }
 }

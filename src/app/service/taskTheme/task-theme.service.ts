@@ -1,7 +1,8 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { BehaviorSubject, map, Observable } from 'rxjs';
 import { TaskTheme } from '../../interface/task-theme.interface';
 import { Task } from '../../interface/task.interface';
+import { TaskService } from '../task.service';
 
 @Injectable({
   providedIn: 'root'
@@ -9,9 +10,18 @@ import { Task } from '../../interface/task.interface';
 export class TaskThemeService {
   private readonly localStorageKey = 'taskThemes';
   private themes$: BehaviorSubject<TaskTheme[]> = new BehaviorSubject<TaskTheme[]>(this.getThemes());
+  private taskService: TaskService | null = null;
 
-  constructor() {
+  constructor(private injector: Injector) {
     this.getOrCreateDefaultTheme();
+  }
+
+  // Отложенное внедрение TaskService
+  private getTaskService(): TaskService {
+    if (!this.taskService) {
+      this.taskService = this.injector.get(TaskService);
+    }
+    return this.taskService;
   }
 
   private getThemes(): TaskTheme[] {
@@ -37,6 +47,9 @@ export class TaskThemeService {
   deleteTheme(themeId: string): void {
     let themes = this.getThemes();
     themes = themes.filter(theme => theme.id !== themeId);
+    
+    // Используем отложенное внедрение TaskService
+    this.getTaskService().deleteTasksByBoard(themeId);
     this.saveThemes(themes);
   }
 
@@ -45,6 +58,7 @@ export class TaskThemeService {
     themes = themes.map(theme => (theme.id === updatedTheme.id ? updatedTheme : theme));
     this.saveThemes(themes);
   }
+
   getOrCreateDefaultTheme(): TaskTheme {
     let themes = this.getThemes();
     let defaultTheme = themes.find(theme => theme.title === 'Без темы');
