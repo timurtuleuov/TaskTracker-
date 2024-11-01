@@ -21,7 +21,7 @@
             </button>
         </div>
       
-      <div
+      <div *ngIf="isDataLoaded"
         cdkDropList
         [cdkDropListData]="todo"
         class="drag-list dark:bg-gray-700 dark:text-white max-h-96 overflow-y-auto" 
@@ -60,7 +60,7 @@
             </button>
         </div>
 
-        <div
+        <div *ngIf="isDataLoaded"
             cdkDropList
             [cdkDropListData]="doing"
             class="drag-list dark:bg-gray-700 dark:text-white"
@@ -99,7 +99,7 @@
             </button>
         </div>
   
-      <div
+      <div *ngIf="isDataLoaded"
         cdkDropList
         [cdkDropListData]="done"
         class="drag-list dark:bg-gray-700 dark:text-white"

@@ -29,10 +29,11 @@ import {RouterModule} from '@angular/router';
 import { DarkModeService } from '../../service/darkMode/dark-mode.service';
 import { TaskTheme } from '../../interface/task-theme.interface';
 import { TaskThemeService } from '../../service/taskTheme/task-theme.service';
+import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-board',
   standalone: true,
-  imports: [CdkDropListGroup, CdkDropList, CdkDrag, NgbModule, MatIconModule, MatButtonModule, MatMenuModule, MatDialogModule, RouterModule, MatInputModule, MatSelectModule], 
+  imports: [CdkDropListGroup, CdkDropList, CdkDrag, NgbModule, MatIconModule, MatButtonModule, MatMenuModule, MatDialogModule, RouterModule, MatInputModule, MatSelectModule, CommonModule], 
   templateUrl: './board.component.html',
   styleUrl: './board.component.scss'
 })
@@ -40,6 +41,8 @@ export class BoardComponent implements OnInit, AfterViewInit {
   todo!: Task[];
   doing!: Task[];
   done!: Task[];
+
+  isDataLoaded = false;
 
   boards!: TaskTheme[];
   selectedBoard: string = "Без темы";
@@ -55,11 +58,17 @@ export class BoardComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.darkModeService.initTheme();
 
-    // Load boards
+    // Загружаем темы
     this.taskThemeService.getAllThemes().subscribe(
-      boards => this.boards = boards
+      boards => {
+        this.boards = boards;
+      }
     );
+
+    // Загружаем задачи перед инициализацией представления
+    this.loadTasks();
   }
+
 
   ngAfterViewInit(): void {
     // Load tasks after view is initialized
@@ -75,16 +84,17 @@ export class BoardComponent implements OnInit, AfterViewInit {
         this.doing = tasks.filter(task => task.status === TaskStatus.Doing);
         this.done = tasks.filter(task => task.status === TaskStatus.Done);
         
-        // Detect changes after data loading
-        this.cdr.detectChanges();
+        this.isDataLoaded = true; // Устанавливаем флаг после загрузки
+        this.cdr.detectChanges(); // Применяем изменения представления
       });
     } else {
+      // Если не выбрана тема, загружаем все задачи по статусам
       this.taskService.getTasksByStatus(TaskStatus.Todo).subscribe(tasks => this.todo = tasks);
       this.taskService.getTasksByStatus(TaskStatus.Doing).subscribe(tasks => this.doing = tasks);
       this.taskService.getTasksByStatus(TaskStatus.Done).subscribe(tasks => this.done = tasks);
-      
-      // Detect changes after loading all tasks
-      this.cdr.detectChanges();
+
+      this.isDataLoaded = true; // Устанавливаем флаг после загрузки
+      this.cdr.detectChanges(); // Применяем изменения представления
     }
   }
 
