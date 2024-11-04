@@ -24,11 +24,10 @@ export class BoardThemeComponent implements OnInit {
   boards: TaskTheme[] = [];
   selectedBoard?: TaskTheme;
   newBoard = "";
-
   constructor(
-    private darkModeService: DarkModeService,
+    private darkModeService: DarkModeService, 
     private taskThemeService: TaskThemeService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
   ) {}
 
   ngOnInit(): void {
@@ -37,31 +36,20 @@ export class BoardThemeComponent implements OnInit {
     // Загрузка бордов
     this.taskThemeService.getAllThemes().subscribe((boards) => {
       this.boards = boards;
-
-      // Check if there's a saved selected board in localStorage
-      const savedBoardId = localStorage.getItem("selectedBoard");
-      if (savedBoardId) {
-        // Try to find the board by ID in the loaded boards
-        this.selectedBoard = boards.find(board => board.id === savedBoardId) || boards[0];
-      } else if (boards.length > 0) {
-        // If no board is saved, select the first board by default
+      // Установим первый борт как выбранный, если есть данные
+      if (boards.length > 0) {
         this.selectedBoard = boards[0];
-      }
-
-      // Save the selected board in localStorage if a valid board is selected
-      if (this.selectedBoard) {
-        localStorage.setItem("selectedBoard", this.selectedBoard.id);
       }
     });
   }
 
   selectBoard(board: TaskTheme): void {
     this.selectedBoard = board;
-    // Save the selected board ID to localStorage
-    localStorage.setItem("selectedBoard", this.selectedBoard.id);
-  }
+    // Здесь можно вызывать обновление задач для выбранного борда
 
-  updateBoard(theme: TaskTheme) {
+
+  }
+  updateBoard(theme: TaskTheme)  {
     const dialogRef = this.dialog.open(EditThemeComponent, {
       data: theme, 
       height: '650px',
@@ -71,22 +59,23 @@ export class BoardThemeComponent implements OnInit {
       console.log(`Dialog result: ${result}`);
     });
   }
-
   addBoard() {
     if (this.newBoard.trim()) {
+      // Логика для добавления новой доски
       const newTheme: TaskTheme = {
         id: uuidv4(),
         title: this.newBoard.trim(),
       };
-      this.taskThemeService.addTheme(newTheme);
+      this.taskThemeService.addTheme(newTheme)
+      
       this.newBoard = '';
     } else {
       console.error('Название доски не может быть пустым');
     }
+    // 
   } 
-
   deleteBoard(theme: TaskTheme) {
-    this.taskThemeService.deleteTheme(theme.id);
+    this.taskThemeService.deleteTheme(theme.id)
   }
 }
 

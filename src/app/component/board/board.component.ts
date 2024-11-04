@@ -30,10 +30,15 @@ import { DarkModeService } from '../../service/darkMode/dark-mode.service';
 import { TaskTheme } from '../../interface/task-theme.interface';
 import { TaskThemeService } from '../../service/taskTheme/task-theme.service';
 import { CommonModule } from '@angular/common';
+import { PickerComponent } from '@ctrl/ngx-emoji-mart';
+
+
 @Component({
   selector: 'app-board',
   standalone: true,
-  imports: [CdkDropListGroup, CdkDropList, CdkDrag, NgbModule, MatIconModule, MatButtonModule, MatMenuModule, MatDialogModule, RouterModule, MatInputModule, MatSelectModule, CommonModule], 
+  imports: [CdkDropListGroup, CdkDropList, CdkDrag, NgbModule, MatIconModule, MatButtonModule, 
+    MatMenuModule, MatDialogModule, RouterModule, MatInputModule, MatSelectModule, CommonModule,
+    PickerComponent], 
   templateUrl: './board.component.html',
   styleUrl: './board.component.scss'
 })
@@ -41,44 +46,51 @@ export class BoardComponent implements OnInit, AfterViewInit {
   todo!: Task[];
   doing!: Task[];
   done!: Task[];
-
   isDataLoaded = false;
-
   boards!: TaskTheme[];
   selectedBoard: string = "Без темы";
-
+  activeEmojiPickerId: string | null = null; // Хранит ID задачи с открытым окном эмодзи
+  darkMode!: boolean;
   constructor(
-    private dialog: MatDialog, 
-    private taskService: TaskService, 
-    private darkModeService: DarkModeService, 
+    private dialog: MatDialog,
+    private taskService: TaskService,
+    private darkModeService: DarkModeService,
     private taskThemeService: TaskThemeService,
     private cdr: ChangeDetectorRef
   ) {}
 
+  toggleEmojiPicker(taskId: string): void {
+    // Закрываем окно эмодзи, если оно уже открыто для данной задачи, иначе открываем
+    this.activeEmojiPickerId = this.activeEmojiPickerId === taskId ? null : taskId;
+  }
+
+  addEmoji(event: any, task: Task): void {
+    task.emoji = event.emoji.native; 
+    this.taskService.updateTask(task); 
+    this.activeEmojiPickerId = null; // Закрываем окно эмодзи после выбора
+  }
+
   ngOnInit(): void {
     this.darkModeService.initTheme();
-
-    // Load boards
+    this.darkModeService.darkMode$.subscribe(darkMode => {
+      this.darkMode = darkMode;
+      this.cdr.detectChanges(); 
+    });
     this.taskThemeService.getAllThemes().subscribe(
       boards => {
         this.boards = boards;
-
-        // Load selected board from localStorage, or default to "Без темы"
         const savedBoardId = localStorage.getItem("selectedBoard");
         if (savedBoardId && boards.some(board => board.id === savedBoardId)) {
           this.selectedBoard = savedBoardId;
         } else if (boards.length > 0) {
-          // If no valid saved board, select the first board
           this.selectedBoard = boards[0].id;
         }
-
         this.loadTasks();
       }
     );
   }
 
   ngAfterViewInit(): void {
-    // Load tasks after view is initialized
     this.loadTasks();
   }
 
@@ -90,16 +102,13 @@ export class BoardComponent implements OnInit, AfterViewInit {
         this.todo = tasks.filter(task => task.status === TaskStatus.Todo);
         this.doing = tasks.filter(task => task.status === TaskStatus.Doing);
         this.done = tasks.filter(task => task.status === TaskStatus.Done);
-        
         this.isDataLoaded = true;
         this.cdr.detectChanges();
       });
     } else {
-      // If no board selected, load tasks by status
       this.taskService.getTasksByStatus(TaskStatus.Todo).subscribe(tasks => this.todo = tasks);
       this.taskService.getTasksByStatus(TaskStatus.Doing).subscribe(tasks => this.doing = tasks);
       this.taskService.getTasksByStatus(TaskStatus.Done).subscribe(tasks => this.done = tasks);
-
       this.isDataLoaded = true;
       this.cdr.detectChanges();
     }
@@ -107,9 +116,8 @@ export class BoardComponent implements OnInit, AfterViewInit {
 
   onBoardChange(boardId: string): void {
     this.selectedBoard = boardId;
-    // Save the selected board ID to localStorage
     localStorage.setItem("selectedBoard", this.selectedBoard);
-    this.loadTasks(); // Reload tasks for the new selected board
+    this.loadTasks();
   }
 
   drop(event: CdkDragDrop<Task[]>): void {
@@ -125,7 +133,6 @@ export class BoardComponent implements OnInit, AfterViewInit {
 
       const thisTask = { ...event.container.data[event.currentIndex] };
 
-      // Update task status based on drop container
       if (event.container.id === 'cdk-drop-list-0') {
         thisTask.status = TaskStatus.Todo;
       } else if (event.container.id === 'cdk-drop-list-1') {
@@ -166,7 +173,6 @@ export class BoardComponent implements OnInit, AfterViewInit {
         return;
     }
   
-    // Open edit dialog with the new task
     const dialogRef = this.dialog.open(EditTaskComponent, {
       data: newTask,
       height: '650px',
@@ -175,7 +181,6 @@ export class BoardComponent implements OnInit, AfterViewInit {
   
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        // If user clicks "Save," add the task
         this.taskService.addTask(result);
       } else {
         console.log('Task creation canceled');
@@ -211,10 +216,19 @@ export class BoardComponent implements OnInit, AfterViewInit {
     this.taskService.addTask(duplicatedTask);
   }
 
+  // Закрытие окна эмодзи при клике вне его
+  @HostListener('document:click', ['$event'])
+  onClickOutside(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.emoji-mart') && !target.classList.contains('img')) {
+      this.activeEmojiPickerId = null;
+    }
+  }
+
   // Shortcuts
   @HostListener('window:keydown', ['$event'])
   createNewDoingTask(event: KeyboardEvent) {
-    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'b' || (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'и') {
+    if ((event.ctrlKey || event.metaKey) && (event.key.toLowerCase() === 'b' || event.key.toLowerCase() === 'и')) {
       event.preventDefault();
       this.addTask('doing');
     }

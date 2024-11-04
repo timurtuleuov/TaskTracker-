@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DarkModeService {
-
+  private darkModeSubject = new BehaviorSubject<boolean>(this.isDarkMode());
+  darkMode$ = this.darkModeSubject.asObservable();
   constructor() { }
 
   isDarkMode(): boolean {
@@ -30,11 +32,10 @@ export class DarkModeService {
   }
 
   toggleDarkMode(): void {
-    if (this.isDarkMode()) {
-      this.disableDarkMode();
-    } else {
-      this.enableDarkMode();
-    }
+    const darkMode = !this.isDarkMode();
+    localStorage.setItem('darkMode', darkMode ? 'true' : 'false');
+    this.darkModeSubject.next(darkMode); // Обновляем состояние темы
+    this.updateTheme(darkMode);
   }
 
   initTheme(): void {
@@ -43,6 +44,9 @@ export class DarkModeService {
     } else {
       document.body.classList.remove('dark');
     }
+  }
+  private updateTheme(darkMode: boolean): void {
+    document.body.classList.toggle('dark-mode', darkMode);
   }
 }
 

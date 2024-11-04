@@ -21,36 +21,53 @@
             </button>
         </div>
       
-      <div *ngIf="isDataLoaded"
-        cdkDropList
-        [cdkDropListData]="todo"
-        class="drag-list dark:bg-gray-700 dark:text-white max-h-96 overflow-y-auto" 
-        (cdkDropListDropped)="drop($event)">
-        @for (item of todo; track item) {
-          <div class="drag-box flex justify-between items-center p-2" cdkDrag>
-            <span>{{ item.title }}</span>
-            <div class="flex space-x-2">
-              <button mat-icon-button (click)="editTask(item)">
-                <mat-icon>edit</mat-icon>
-              </button>
-              <button mat-icon-button [matMenuTriggerFor]="menu">
-                <mat-icon>more_horiz</mat-icon>
-              </button>
-              <mat-menu #menu="matMenu">
-                <button mat-menu-item (click)="deleteTask(item)">
-                  <span>Удалить</span>
-                </button>
-                <button mat-menu-item (click)="duplicateTask(item)">
-                  <span>Дублировать задание</span>
-                </button>
-                <button mat-menu-item [routerLink]="['/task/', item.id]">
-                  <span>Открыть</span>
-                </button>
-              </mat-menu>
-            </div>
-          </div>
-        }
+        <div *ngIf="isDataLoaded"
+    cdkDropList
+    [cdkDropListData]="todo"
+    class="drag-list dark:bg-gray-700 dark:text-white"
+    (cdkDropListDropped)="drop($event)">
+  @for (item of todo; track item) {
+    <div class="drag-box flex justify-between items-start p-2" cdkDrag>
+      <div class="flex items-center">
+        <button (click)="toggleEmojiPicker(item.id)"
+            class="img mr-2"
+            [style.opacity]="item.emoji ? '1' : '0.5'">
+          {{ item.emoji || '😊' }}
+        </button>
+        <emoji-mart *ngIf="activeEmojiPickerId === item.id"
+            class="emoji-mart"
+            [showPreview]="false"
+            [style]="{ position: 'absolute', zIndex: '1000' }"
+
+            [darkMode]="darkMode"
+            (emojiSelect)="addEmoji($event, item)"
+            title="Choose your emoji"></emoji-mart>
+        <span class="flex-1 max-w-[250px] overflow-hidden truncate break-words">{{ item.title }}</span>
       </div>
+      <div class="flex space-x-2">
+        <button mat-icon-button (click)="editTask(item)">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button [matMenuTriggerFor]="menu">
+          <mat-icon>more_horiz</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item (click)="deleteTask(item)">
+            <span>Удалить</span>
+          </button>
+          <button mat-menu-item (click)="duplicateTask(item)">
+            <span>Дублировать задание</span>
+          </button>
+          <button mat-menu-item [routerLink]="['/task/', item.id]">
+            <span>Открыть</span>
+          </button>
+        </mat-menu>
+      </div>
+    </div>
+  }
+</div>
+
+   
     </div>
     <div class="drag-container">
       <div class="flex flex-row justify-start">
@@ -61,13 +78,25 @@
         </div>
 
         <div *ngIf="isDataLoaded"
-            cdkDropList
-            [cdkDropListData]="doing"
-            class="drag-list dark:bg-gray-700 dark:text-white"
-            (cdkDropListDropped)="drop($event)">
-                @for (item of doing; track item) {
-                  <div class="drag-box flex justify-between items-center p-2" cdkDrag>
-                    <span>{{ item.title }}</span>
+        cdkDropList
+        [cdkDropListData]="doing"
+        class="drag-list dark:bg-gray-700 dark:text-white"
+        (cdkDropListDropped)="drop($event)">
+        @for (item of doing; track item) {
+          <div class="drag-box flex justify-between items-center p-2" cdkDrag>
+            
+              <button (click)="toggleEmojiPicker(item.id)"
+              class="img"
+              [style.opacity]="item.emoji ? '1' : '0.5'">
+        {{ item.emoji || '😊' }}
+      </button>
+        <emoji-mart *ngIf="activeEmojiPickerId === item.id"
+                class="emoji-mart"
+                [showPreview]="false"
+                [style]="{ position: 'absolute', zIndex: '1000' }"
+                (emojiSelect)="addEmoji($event, item)"
+                title="Choose your emoji"></emoji-mart>
+                <span class="flex-1 max-w-[250px] overflow-hidden truncate break-words">{{ item.title }}</span>
                     <div class="flex space-x-2">
                       <button mat-icon-button (click)="editTask(item)">
                         <mat-icon>edit</mat-icon>
@@ -88,7 +117,7 @@
                       </mat-menu>
                     </div>
                   </div>
-                }
+        }
               </div>
         </div>
     <div class="drag-container">
@@ -106,7 +135,19 @@
         (cdkDropListDropped)="drop($event)">
         @for (item of done; track item) {
           <div class="drag-box flex justify-between items-center p-2" cdkDrag>
-            <span>{{ item.title }}</span>
+            
+              <button (click)="toggleEmojiPicker(item.id)"
+              class="img"
+              [style.opacity]="item.emoji ? '1' : '0.1'">
+        {{ item.emoji || '😊' }}
+      </button>
+        <emoji-mart *ngIf="activeEmojiPickerId === item.id"
+                class="emoji-mart"
+                [showPreview]="false"
+                [style]="{ position: 'absolute', zIndex: '1000' }"
+                (emojiSelect)="addEmoji($event, item)"
+                title="Choose your emoji"></emoji-mart>
+                <span class="flex-1 max-w-[250px] overflow-hidden truncate break-words">{{ item.title }}</span>
             <div class="flex space-x-2">
               <button mat-icon-button (click)="editTask(item)">
                 <mat-icon>edit</mat-icon>
