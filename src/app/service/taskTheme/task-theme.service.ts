@@ -68,4 +68,9 @@ export class TaskThemeService {
     }
     return defaultTheme;
   }
+  getThemeById(id: string): TaskTheme {
+    let themes = this.getThemes();
+    const board = themes.filter(theme => theme.id !== id)
+    return board[0]
+  }
 }

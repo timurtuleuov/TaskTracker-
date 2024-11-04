@@ -58,17 +58,24 @@ export class BoardComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.darkModeService.initTheme();
 
-    // Загружаем темы
+    // Load boards
     this.taskThemeService.getAllThemes().subscribe(
       boards => {
         this.boards = boards;
+
+        // Load selected board from localStorage, or default to "Без темы"
+        const savedBoardId = localStorage.getItem("selectedBoard");
+        if (savedBoardId && boards.some(board => board.id === savedBoardId)) {
+          this.selectedBoard = savedBoardId;
+        } else if (boards.length > 0) {
+          // If no valid saved board, select the first board
+          this.selectedBoard = boards[0].id;
+        }
+
+        this.loadTasks();
       }
     );
-
-    // Загружаем задачи перед инициализацией представления
-    this.loadTasks();
   }
-
 
   ngAfterViewInit(): void {
     // Load tasks after view is initialized
@@ -84,22 +91,24 @@ export class BoardComponent implements OnInit, AfterViewInit {
         this.doing = tasks.filter(task => task.status === TaskStatus.Doing);
         this.done = tasks.filter(task => task.status === TaskStatus.Done);
         
-        this.isDataLoaded = true; // Устанавливаем флаг после загрузки
-        this.cdr.detectChanges(); // Применяем изменения представления
+        this.isDataLoaded = true;
+        this.cdr.detectChanges();
       });
     } else {
-      // Если не выбрана тема, загружаем все задачи по статусам
+      // If no board selected, load tasks by status
       this.taskService.getTasksByStatus(TaskStatus.Todo).subscribe(tasks => this.todo = tasks);
       this.taskService.getTasksByStatus(TaskStatus.Doing).subscribe(tasks => this.doing = tasks);
       this.taskService.getTasksByStatus(TaskStatus.Done).subscribe(tasks => this.done = tasks);
 
-      this.isDataLoaded = true; // Устанавливаем флаг после загрузки
-      this.cdr.detectChanges(); // Применяем изменения представления
+      this.isDataLoaded = true;
+      this.cdr.detectChanges();
     }
   }
 
   onBoardChange(boardId: string): void {
     this.selectedBoard = boardId;
+    // Save the selected board ID to localStorage
+    localStorage.setItem("selectedBoard", this.selectedBoard);
     this.loadTasks(); // Reload tasks for the new selected board
   }
 
@@ -175,7 +184,6 @@ export class BoardComponent implements OnInit, AfterViewInit {
   }
 
   editTask(task: Task): void {
-    // Создаем копию задачи
     const taskCopy = { ...task };
   
     const dialogRef = this.dialog.open(EditTaskComponent, {
@@ -186,10 +194,8 @@ export class BoardComponent implements OnInit, AfterViewInit {
   
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        // Если пользователь нажал "Сохранить", обновляем задачу
         this.taskService.updateTask(result);
       } else {
-        // Если пользователь нажал "Отмена", ничего не сохраняем
         console.log('Изменения отменены');
       }
     });
@@ -205,18 +211,18 @@ export class BoardComponent implements OnInit, AfterViewInit {
     this.taskService.addTask(duplicatedTask);
   }
 
-  //shortcuts
+  // Shortcuts
   @HostListener('window:keydown', ['$event'])
   createNewDoingTask(event: KeyboardEvent) {
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'b' || (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'и') {
-      event.preventDefault(); // Предотвращаем стандартное поведение
+      event.preventDefault();
       this.addTask('doing');
     }
   }
-  
-
-
 }
+
+
+
 @Component({
   selector: 'edit-task',
   templateUrl: 'edit-task.html',
