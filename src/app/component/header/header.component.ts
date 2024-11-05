@@ -28,6 +28,5 @@ export class HeaderComponent {
     } else {
       this.darkModeService.disableDarkMode();
     }
-    console.log(this.isDarkMode)
   }
 }

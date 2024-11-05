@@ -93,11 +93,13 @@
         {{ item.emoji || '😊' }}
       </button>
         <emoji-mart *ngIf="activeEmojiPickerId === item.id"
-                class="emoji-mart"
-                [showPreview]="false"
-                [style]="{ position: 'absolute', zIndex: '1000' }"
-                (emojiSelect)="addEmoji($event, item)"
-                title="Choose your emoji"></emoji-mart>
+        class="emoji-mart"
+        [showPreview]="false"
+        [style]="{ position: 'absolute', zIndex: '1000' }"
+
+        [darkMode]="darkMode"
+        (emojiSelect)="addEmoji($event, item)"
+        title="Choose your emoji"></emoji-mart>
                 <span class="flex-1 max-w-[250px] overflow-hidden truncate break-words">{{ item.title }}</span>
                     <div class="flex space-x-2">
                       <button mat-icon-button (click)="editTask(item)">
@@ -144,12 +146,15 @@
               [style.fontSize.px]="24">
         {{ item.emoji || '😊' }}
       </button>
-        <emoji-mart *ngIf="activeEmojiPickerId === item.id"
-                class="emoji-mart"
-                [showPreview]="false"
-                [style]="{ position: 'absolute', zIndex: '1000' }"
-                (emojiSelect)="addEmoji($event, item)"
-                title="Choose your emoji"></emoji-mart>
+          <emoji-mart *ngIf="activeEmojiPickerId === item.id"
+            class="emoji-mart"
+            [showPreview]="false"
+            [style]="{ position: 'absolute', zIndex: '1000' }"
+            [darkMode]="darkMode"
+            (emojiSelect)="addEmoji($event, item)"
+            title="Choose your emoji">
+          </emoji-mart>
+              
                 <span class="flex-1 max-w-[250px] overflow-hidden truncate break-words">{{ item.title }}</span>
             <div class="flex space-x-2">
               <button mat-icon-button (click)="editTask(item)">

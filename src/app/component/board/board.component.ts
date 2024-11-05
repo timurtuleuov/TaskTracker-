@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, HostListener, Inject, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, HostListener, Inject, NgZone, OnInit } from '@angular/core';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
@@ -49,14 +49,16 @@ export class BoardComponent implements OnInit, AfterViewInit {
   isDataLoaded = false;
   boards!: TaskTheme[];
   selectedBoard: string = "Без темы";
-  activeEmojiPickerId: string | null = null; // Хранит ID задачи с открытым окном эмодзи
+  activeEmojiPickerId: string | null = null; 
   darkMode!: boolean;
+
   constructor(
     private dialog: MatDialog,
     private taskService: TaskService,
     private darkModeService: DarkModeService,
     private taskThemeService: TaskThemeService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private zone: NgZone
   ) {}
 
   toggleEmojiPicker(taskId: string): void {
@@ -73,21 +75,22 @@ export class BoardComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.darkModeService.initTheme();
     this.darkModeService.darkMode$.subscribe(darkMode => {
-      this.darkMode = darkMode;
-      this.cdr.detectChanges(); 
+      this.zone.run(() => {
+        this.darkMode = darkMode;
+        this.cdr.detectChanges();
+      });
     });
-    this.taskThemeService.getAllThemes().subscribe(
-      boards => {
-        this.boards = boards;
-        const savedBoardId = localStorage.getItem("selectedBoard");
-        if (savedBoardId && boards.some(board => board.id === savedBoardId)) {
-          this.selectedBoard = savedBoardId;
-        } else if (boards.length > 0) {
-          this.selectedBoard = boards[0].id;
-        }
-        this.loadTasks();
+
+    this.taskThemeService.getAllThemes().subscribe(boards => {
+      this.boards = boards;
+      const savedBoardId = localStorage.getItem("selectedBoard");
+      if (savedBoardId && boards.some(board => board.id === savedBoardId)) {
+        this.selectedBoard = savedBoardId;
+      } else if (boards.length > 0) {
+        this.selectedBoard = boards[0].id;
       }
-    );
+      this.loadTasks();
+    });
   }
 
   ngAfterViewInit(): void {
