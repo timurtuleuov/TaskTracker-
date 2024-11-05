@@ -20,7 +20,7 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angu
 import { Task } from '../../interface/task.interface';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import { TaskService } from '../../service/task.service';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, NgModel, ReactiveFormsModule } from '@angular/forms';
 import { EditTaskComponent } from './layers/edit-task/edit-task.component';
 import { Observable } from 'rxjs';
 import { TaskStatus } from '../../interface/task-status';
@@ -51,7 +51,7 @@ export class BoardComponent implements OnInit, AfterViewInit {
   selectedBoard: string = "Без темы";
   activeEmojiPickerId: string | null = null; 
   darkMode!: boolean;
-
+  emojiForm!: FormGroup;
   constructor(
     private dialog: MatDialog,
     private taskService: TaskService,
