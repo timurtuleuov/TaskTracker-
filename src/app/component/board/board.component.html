@@ -31,7 +31,8 @@
       <div class="flex items-center">
         <button (click)="toggleEmojiPicker(item.id)"
             class="img mr-2"
-            [style.opacity]="item.emoji ? '1' : '0.5'">
+            [style.opacity]="item.emoji ? '1' : '0.5'"
+            [style.fontSize.px]="24">
           {{ item.emoji || '😊' }}
         </button>
         <emoji-mart *ngIf="activeEmojiPickerId === item.id"
@@ -87,7 +88,8 @@
             
               <button (click)="toggleEmojiPicker(item.id)"
               class="img"
-              [style.opacity]="item.emoji ? '1' : '0.5'">
+              [style.opacity]="item.emoji ? '1' : '0.5'"
+              [style.fontSize.px]="24">
         {{ item.emoji || '😊' }}
       </button>
         <emoji-mart *ngIf="activeEmojiPickerId === item.id"
@@ -138,7 +140,8 @@
             
               <button (click)="toggleEmojiPicker(item.id)"
               class="img"
-              [style.opacity]="item.emoji ? '1' : '0.1'">
+              [style.opacity]="item.emoji ? '1' : '0.1'"
+              [style.fontSize.px]="24">
         {{ item.emoji || '😊' }}
       </button>
         <emoji-mart *ngIf="activeEmojiPickerId === item.id"
