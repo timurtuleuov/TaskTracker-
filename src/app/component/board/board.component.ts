@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, HostListener, Inject, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, HostListener, Inject, NgZone, OnInit } from '@angular/core';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
@@ -20,7 +20,7 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angu
 import { Task } from '../../interface/task.interface';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import { TaskService } from '../../service/task.service';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, NgModel, ReactiveFormsModule } from '@angular/forms';
 import { EditTaskComponent } from './layers/edit-task/edit-task.component';
 import { Observable } from 'rxjs';
 import { TaskStatus } from '../../interface/task-status';
@@ -30,10 +30,15 @@ import { DarkModeService } from '../../service/darkMode/dark-mode.service';
 import { TaskTheme } from '../../interface/task-theme.interface';
 import { TaskThemeService } from '../../service/taskTheme/task-theme.service';
 import { CommonModule } from '@angular/common';
+import { PickerComponent } from '@ctrl/ngx-emoji-mart';
+
+
 @Component({
   selector: 'app-board',
   standalone: true,
-  imports: [CdkDropListGroup, CdkDropList, CdkDrag, NgbModule, MatIconModule, MatButtonModule, MatMenuModule, MatDialogModule, RouterModule, MatInputModule, MatSelectModule, CommonModule], 
+  imports: [CdkDropListGroup, CdkDropList, CdkDrag, NgbModule, MatIconModule, MatButtonModule, 
+    MatMenuModule, MatDialogModule, RouterModule, MatInputModule, MatSelectModule, CommonModule,
+    PickerComponent], 
   templateUrl: './board.component.html',
   styleUrl: './board.component.scss'
 })
@@ -41,37 +46,54 @@ export class BoardComponent implements OnInit, AfterViewInit {
   todo!: Task[];
   doing!: Task[];
   done!: Task[];
-
   isDataLoaded = false;
-
   boards!: TaskTheme[];
   selectedBoard: string = "Без темы";
-
+  activeEmojiPickerId: string | null = null; 
+  darkMode!: boolean;
+  emojiForm!: FormGroup;
   constructor(
-    private dialog: MatDialog, 
-    private taskService: TaskService, 
-    private darkModeService: DarkModeService, 
+    private dialog: MatDialog,
+    private taskService: TaskService,
+    private darkModeService: DarkModeService,
     private taskThemeService: TaskThemeService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private zone: NgZone
   ) {}
+
+  toggleEmojiPicker(taskId: string): void {
+    // Закрываем окно эмодзи, если оно уже открыто для данной задачи, иначе открываем
+    this.activeEmojiPickerId = this.activeEmojiPickerId === taskId ? null : taskId;
+  }
+
+  addEmoji(event: any, task: Task): void {
+    task.emoji = event.emoji.native; 
+    this.taskService.updateTask(task); 
+    this.activeEmojiPickerId = null; // Закрываем окно эмодзи после выбора
+  }
 
   ngOnInit(): void {
     this.darkModeService.initTheme();
+    this.darkModeService.darkMode$.subscribe(darkMode => {
+      this.zone.run(() => {
+        this.darkMode = darkMode;
+        this.cdr.detectChanges();
+      });
+    });
 
-    // Загружаем темы
-    this.taskThemeService.getAllThemes().subscribe(
-      boards => {
-        this.boards = boards;
+    this.taskThemeService.getAllThemes().subscribe(boards => {
+      this.boards = boards;
+      const savedBoardId = localStorage.getItem("selectedBoard");
+      if (savedBoardId && boards.some(board => board.id === savedBoardId)) {
+        this.selectedBoard = savedBoardId;
+      } else if (boards.length > 0) {
+        this.selectedBoard = boards[0].id;
       }
-    );
-
-    // Загружаем задачи перед инициализацией представления
-    this.loadTasks();
+      this.loadTasks();
+    });
   }
 
-
   ngAfterViewInit(): void {
-    // Load tasks after view is initialized
     this.loadTasks();
   }
 
@@ -83,24 +105,22 @@ export class BoardComponent implements OnInit, AfterViewInit {
         this.todo = tasks.filter(task => task.status === TaskStatus.Todo);
         this.doing = tasks.filter(task => task.status === TaskStatus.Doing);
         this.done = tasks.filter(task => task.status === TaskStatus.Done);
-        
-        this.isDataLoaded = true; // Устанавливаем флаг после загрузки
-        this.cdr.detectChanges(); // Применяем изменения представления
+        this.isDataLoaded = true;
+        this.cdr.detectChanges();
       });
     } else {
-      // Если не выбрана тема, загружаем все задачи по статусам
       this.taskService.getTasksByStatus(TaskStatus.Todo).subscribe(tasks => this.todo = tasks);
       this.taskService.getTasksByStatus(TaskStatus.Doing).subscribe(tasks => this.doing = tasks);
       this.taskService.getTasksByStatus(TaskStatus.Done).subscribe(tasks => this.done = tasks);
-
-      this.isDataLoaded = true; // Устанавливаем флаг после загрузки
-      this.cdr.detectChanges(); // Применяем изменения представления
+      this.isDataLoaded = true;
+      this.cdr.detectChanges();
     }
   }
 
   onBoardChange(boardId: string): void {
     this.selectedBoard = boardId;
-    this.loadTasks(); // Reload tasks for the new selected board
+    localStorage.setItem("selectedBoard", this.selectedBoard);
+    this.loadTasks();
   }
 
   drop(event: CdkDragDrop<Task[]>): void {
@@ -116,7 +136,6 @@ export class BoardComponent implements OnInit, AfterViewInit {
 
       const thisTask = { ...event.container.data[event.currentIndex] };
 
-      // Update task status based on drop container
       if (event.container.id === 'cdk-drop-list-0') {
         thisTask.status = TaskStatus.Todo;
       } else if (event.container.id === 'cdk-drop-list-1') {
@@ -157,7 +176,6 @@ export class BoardComponent implements OnInit, AfterViewInit {
         return;
     }
   
-    // Open edit dialog with the new task
     const dialogRef = this.dialog.open(EditTaskComponent, {
       data: newTask,
       height: '650px',
@@ -166,7 +184,6 @@ export class BoardComponent implements OnInit, AfterViewInit {
   
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        // If user clicks "Save," add the task
         this.taskService.addTask(result);
       } else {
         console.log('Task creation canceled');
@@ -175,7 +192,6 @@ export class BoardComponent implements OnInit, AfterViewInit {
   }
 
   editTask(task: Task): void {
-    // Создаем копию задачи
     const taskCopy = { ...task };
   
     const dialogRef = this.dialog.open(EditTaskComponent, {
@@ -186,10 +202,8 @@ export class BoardComponent implements OnInit, AfterViewInit {
   
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        // Если пользователь нажал "Сохранить", обновляем задачу
         this.taskService.updateTask(result);
       } else {
-        // Если пользователь нажал "Отмена", ничего не сохраняем
         console.log('Изменения отменены');
       }
     });
@@ -205,18 +219,27 @@ export class BoardComponent implements OnInit, AfterViewInit {
     this.taskService.addTask(duplicatedTask);
   }
 
-  //shortcuts
+  // Закрытие окна эмодзи при клике вне его
+  @HostListener('document:click', ['$event'])
+  onClickOutside(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.emoji-mart') && !target.classList.contains('img')) {
+      this.activeEmojiPickerId = null;
+    }
+  }
+
+  // Shortcuts
   @HostListener('window:keydown', ['$event'])
   createNewDoingTask(event: KeyboardEvent) {
-    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'b' || (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'и') {
-      event.preventDefault(); // Предотвращаем стандартное поведение
+    if ((event.ctrlKey || event.metaKey) && (event.key.toLowerCase() === 'b' || event.key.toLowerCase() === 'и')) {
+      event.preventDefault();
       this.addTask('doing');
     }
   }
-  
-
-
 }
+
+
+
 @Component({
   selector: 'edit-task',
   templateUrl: 'edit-task.html',

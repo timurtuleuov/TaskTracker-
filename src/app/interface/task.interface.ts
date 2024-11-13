@@ -10,5 +10,6 @@ export interface Task{
     priority: string;
     status: TaskStatus;
     executor: string;
+    emoji?: string;
     board?: TaskTheme;
 }
