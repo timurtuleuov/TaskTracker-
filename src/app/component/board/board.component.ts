@@ -37,7 +37,8 @@ import { PickerComponent } from '@ctrl/ngx-emoji-mart';
   selector: 'app-board',
   standalone: true,
   imports: [CdkDropListGroup, CdkDropList, CdkDrag, NgbModule, MatIconModule, MatButtonModule, 
-    MatMenuModule, MatDialogModule, RouterModule, MatInputModule, MatSelectModule, CommonModule,
+    MatMenuModule, MatDialogModule, RouterModule, MatInputModule, MatSelectModule, CommonModule,NgbDatepickerModule,
+    MatDatepickerModule, MatNativeDateModule, FormsModule, ReactiveFormsModule,
     PickerComponent], 
   templateUrl: './board.component.html',
   styleUrl: './board.component.scss'
@@ -52,6 +53,13 @@ export class BoardComponent implements OnInit, AfterViewInit {
   activeEmojiPickerId: string | null = null; 
   darkMode!: boolean;
 
+  range = new FormGroup({
+    start: new FormControl<Date | null>(null),
+    end: new FormControl<Date | null>(null),
+  });
+
+  startDate?: Date
+  endDate?: Date
   constructor(
     private dialog: MatDialog,
     private taskService: TaskService,
