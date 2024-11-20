@@ -4,3 +4,5 @@
 html, body { height: 100%; }
 @import 'bootstrap/scss/bootstrap';
 @import '@ctrl/ngx-emoji-mart/picker';
+@import "@ng-select/ng-select/themes/default.theme.css";
+@import "@ng-select/ng-select/themes/material.theme.css";

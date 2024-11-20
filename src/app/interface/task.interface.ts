@@ -1,3 +1,4 @@
+import { Tag } from "./tag.interface";
 import { TaskStatus } from "./task-status";
 import { TaskTheme } from "./task-theme.interface";
 
@@ -12,4 +13,5 @@ export interface Task{
     executor: string;
     emoji?: string;
     board?: TaskTheme;
+    tags?: Tag[]
 }

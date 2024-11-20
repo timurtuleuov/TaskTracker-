@@ -3,6 +3,7 @@ import { Task } from '../interface/task.interface';
 import { BehaviorSubject, Observable, map } from 'rxjs';
 import { TaskStatus } from '../interface/task-status';
 import { TaskThemeService } from './taskTheme/task-theme.service';
+import { Tag } from '../interface/tag.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -32,16 +33,19 @@ export class TaskService {
       map(tasks => tasks.filter(task => task.status === status))
     );
   }
-  getTaskById(id: string): Observable<Task | any> {
+
+  getTaskById(id: string): Observable<Task | undefined> {
     return this.tasks$.pipe(
       map(tasks => tasks.find(task => task.id === id))
     );
   }
+
   getTasksByBoard(boardId: string): Observable<Task[]> {
     return this.tasks$.pipe(
       map(tasks => tasks.filter(task => task.board && task.board.id === boardId))
     );
   }
+
   addTask(newTask: Task): void {
     if (!newTask.board) {
       newTask.board = this.taskThemeService.getOrCreateDefaultTheme(); // Assign default theme if undefined
@@ -56,7 +60,7 @@ export class TaskService {
     tasks = tasks.filter(task => task.id !== taskToDelete.id);
     this.saveTasks(tasks);
   }
-  
+
   updateTask(updatedTask: Task): void {
     if (updatedTask) { 
       let tasks = this.getTasks();
@@ -70,5 +74,18 @@ export class TaskService {
   deleteTasksByBoard(boardId: string): void {
     const tasks = this.getTasks().filter(task => !task.board || task.board.id !== boardId);
     this.saveTasks(tasks);
+  }
+
+  removeTagFromTasks(tagTitle: string): void {
+    const tasks = this.getTasks().map(task => ({
+      ...task,
+      tags: task.tags?.filter(tag => tag.title !== tagTitle) || [],
+    }));
+    this.saveTasks(tasks); 
+  }
+
+  getTagsById(taskId: string): Tag[] | undefined {
+    const task = this.getTasks().find(task => task.id === taskId);
+    return task?.tags;
   }
 }
