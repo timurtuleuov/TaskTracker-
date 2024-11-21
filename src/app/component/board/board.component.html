@@ -17,17 +17,22 @@
 
         
         <div>
-        <mat-form-field >
+        
       
         <!-- Time range -->
       
-        <mat-date-range-input [formGroup]="range" [rangePicker]="picker">
-          <input matStartDate [(ngModel)]="startDate" name="start" formControlName="start" placeholder="Нач. дата">
-          <input matEndDate [(ngModel)]="endDate" name="deadline" formControlName="end" placeholder="Кон. дата">
-        </mat-date-range-input>
-      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-      <mat-date-range-picker #picker></mat-date-range-picker>
-    </mat-form-field>
+        <mat-form-field>
+          <mat-date-range-input [formGroup]="range" [rangePicker]="picker" 
+                      >
+
+            <input matStartDate [(ngModel)]="startDate" name="start" formControlName="start" placeholder="Нач. дата">
+            <input matEndDate [(ngModel)]="endDate" name="deadline" formControlName="end" placeholder="Кон. дата" (dateChange)="onTimeRangeChange()">
+          </mat-date-range-input>
+          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-date-range-picker #picker></mat-date-range-picker>
+        </mat-form-field>
+        
+        
       </div>
     
       

@@ -18,7 +18,7 @@ import {
 } from '@angular/cdk/drag-drop';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { Task } from '../../interface/task.interface';
-import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatDatepickerInputEvent, MatDatepickerModule} from '@angular/material/datepicker';
 import { TaskService } from '../../service/task.service';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { EditTaskComponent } from './layers/edit-task/edit-task.component';
@@ -107,28 +107,66 @@ export class BoardComponent implements OnInit, AfterViewInit {
 
   loadTasks(): void {
     const boardId = this.selectedBoard === "Без темы" ? null : this.selectedBoard;
-
+  
     if (boardId) {
       this.taskService.getTasksByBoard(boardId).subscribe(tasks => {
-        this.todo = tasks.filter(task => task.status === TaskStatus.Todo);
-        this.doing = tasks.filter(task => task.status === TaskStatus.Doing);
-        this.done = tasks.filter(task => task.status === TaskStatus.Done);
+        const filteredTasks = this.filterTasksByDateRange(tasks, this.startDate, this.endDate);
+  
+        this.todo = filteredTasks.filter(task => task.status === TaskStatus.Todo);
+        this.doing = filteredTasks.filter(task => task.status === TaskStatus.Doing);
+        this.done = filteredTasks.filter(task => task.status === TaskStatus.Done);
+  
         this.isDataLoaded = true;
         this.cdr.detectChanges();
       });
     } else {
-      this.taskService.getTasksByStatus(TaskStatus.Todo).subscribe(tasks => this.todo = tasks);
-      this.taskService.getTasksByStatus(TaskStatus.Doing).subscribe(tasks => this.doing = tasks);
-      this.taskService.getTasksByStatus(TaskStatus.Done).subscribe(tasks => this.done = tasks);
+      const filterByStatus = (status: TaskStatus) =>
+        this.taskService.getTasksByStatus(status).subscribe(tasks => {
+          const filteredTasks = this.filterTasksByDateRange(tasks, this.startDate, this.endDate);
+          if (status === TaskStatus.Todo) this.todo = filteredTasks;
+          if (status === TaskStatus.Doing) this.doing = filteredTasks;
+          if (status === TaskStatus.Done) this.done = filteredTasks;
+          this.cdr.detectChanges();
+        });
+  
+      filterByStatus(TaskStatus.Todo);
+      filterByStatus(TaskStatus.Doing);
+      filterByStatus(TaskStatus.Done);
+  
       this.isDataLoaded = true;
-      this.cdr.detectChanges();
     }
   }
-
+  filterTasksByDateRange(tasks: Task[], startDate?: Date, endDate?: Date): Task[] {
+    if (!startDate && !endDate) return tasks; // Если диапазон не задан, возвращаем все задачи.
+  
+    return tasks.filter(task => {
+      const taskStart = new Date(task.start);
+      const taskEnd = new Date(task.deadline);
+  
+      // Условие для фильтрации задач:
+      const isWithinStart = startDate ? taskStart >= startDate : true;
+      const isWithinEnd = endDate ? taskEnd <= endDate : true;
+  
+      return isWithinStart && isWithinEnd;
+    });
+  }
+  
   onBoardChange(boardId: string): void {
     this.selectedBoard = boardId;
     localStorage.setItem("selectedBoard", this.selectedBoard);
     this.loadTasks();
+  }
+
+  onTimeRangeChange(): void {
+    // Извлекаем дату начала и конца из формы
+    this.startDate = this.range.value.start ? new Date(this.range.value.start) : undefined;
+    this.endDate = this.range.value.end ? new Date(this.range.value.end) : undefined;
+  
+    // Сохраняем диапазон в localStorage
+    localStorage.setItem("startDate", this.startDate ? this.startDate.toISOString() : '');
+    localStorage.setItem("endDate", this.endDate ? this.endDate.toISOString() : '');
+  
+    this.loadTasks(); // Обновляем задачи
   }
 
   drop(event: CdkDragDrop<Task[]>): void {
