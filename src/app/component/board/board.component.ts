@@ -89,6 +89,10 @@ export class BoardComponent implements OnInit, AfterViewInit {
       });
     });
 
+    const savedStartDate = localStorage.getItem("startDate");
+  const savedEndDate = localStorage.getItem("endDate");
+    this.startDate = savedStartDate ? new Date(savedStartDate) : undefined;
+  this.endDate = savedEndDate ? new Date(savedEndDate) : undefined;
     this.taskThemeService.getAllThemes().subscribe(boards => {
       this.boards = boards;
       const savedBoardId = localStorage.getItem("selectedBoard");
@@ -138,18 +142,30 @@ export class BoardComponent implements OnInit, AfterViewInit {
   }
   filterTasksByDateRange(tasks: Task[], startDate?: Date, endDate?: Date): Task[] {
     if (!startDate && !endDate) return tasks; // Если диапазон не задан, возвращаем все задачи.
-  
+
     return tasks.filter(task => {
-      const taskStart = new Date(task.start);
-      const taskEnd = new Date(task.deadline);
-  
-      // Условие для фильтрации задач:
-      const isWithinStart = startDate ? taskStart >= startDate : true;
-      const isWithinEnd = endDate ? taskEnd <= endDate : true;
-  
-      return isWithinStart && isWithinEnd;
+        // Преобразуем поля start и deadline в даты
+        const taskStart = task.start ? new Date(task.start) : null;
+        const taskEnd = task.deadline ? new Date(task.deadline) : null;
+
+        // Проверяем валидность дат
+        const isValidStart = taskStart && !isNaN(taskStart.getTime());
+        const isValidEnd = taskEnd && !isNaN(taskEnd.getTime());
+
+        // Если обе даты отсутствуют, исключаем задачу
+        if (!isValidStart && !isValidEnd) {
+            return false;
+        }
+
+        // Условия для фильтрации
+        const isWithinStart = startDate && isValidStart ? taskStart >= startDate : true;
+        const isWithinEnd = endDate && isValidEnd ? taskEnd <= endDate : true;
+
+        return isWithinStart && isWithinEnd;
     });
-  }
+}
+
+  
   
   onBoardChange(boardId: string): void {
     this.selectedBoard = boardId;
@@ -199,7 +215,7 @@ export class BoardComponent implements OnInit, AfterViewInit {
       id: uuidv4(),
       title: 'New Task',
       description: '',
-      start: '',
+      start: new Date().toISOString(),
       deadline: '',
       priority: '',
       status: TaskStatus.Todo,
