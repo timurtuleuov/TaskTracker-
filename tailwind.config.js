@@ -5,8 +5,12 @@ module.exports = {
   ],
   darkMode: 'class',
   theme: {
-    extend: {},
-  },
+    extend: {
+      backgroundColor: {
+        'gray-900-important': 'rgb(26, 32, 44)', // Приоритетная версия
+      },
+    },
+  
   plugins: [],
+  }
 }
-

@@ -279,7 +279,7 @@ export class BoardComponent implements OnInit, AfterViewInit {
     this.taskService.addTask(duplicatedTask);
   }
 
-  // Закрытие окна эмодзи при клике вне его
+
   @HostListener('document:click', ['$event'])
   onClickOutside(event: MouseEvent): void {
     const target = event.target as HTMLElement;
@@ -288,7 +288,6 @@ export class BoardComponent implements OnInit, AfterViewInit {
     }
   }
 
-  // Shortcuts
   @HostListener('window:keydown', ['$event'])
   createNewDoingTask(event: KeyboardEvent) {
     if ((event.ctrlKey || event.metaKey) && (event.key.toLowerCase() === 'b' || event.key.toLowerCase() === 'и')) {

@@ -1,120 +1,65 @@
+<div class="dark:bg-gray-900 dark:text-white w-full">
+<div class="container px-4 max-w-screen-lg lg:max-w-screen-xl dark:bg-gray-900 dark:text-white">
+<!-- Выбор доски -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 items-center gap-4 p-4 dark:bg-gray-900 dark:text-white">
+  <!-- Пустой блок для выравнивания -->
+  <div class="hidden lg:block"></div>
 
-    <!-- Chosing board -->
-    <div class="grid grid-cols-3 items-center justify-content-center h-fit dark:bg-gray-900 dark:text-white">
-      <div></div>
-      
-      <div class="flex justify-center">
-        <mat-form-field >
-          <mat-label>Boards</mat-label>
-          <mat-select [(value)]="selectedBoard" (selectionChange)="onBoardChange($event.value)">
-            <mat-option></mat-option>
-            @for (option of boards; track option) {
-              <mat-option [value]="option.id">{{ option.title }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-        </div>
+  <!-- Выбор доски -->
+  <div class="flex justify-center">
+    <mat-form-field  class="w-full max-w-xs dark:bg-gray-900 dark:text-white">
+      <mat-label>Boards</mat-label>
+      <mat-select [(value)]="selectedBoard" (selectionChange)="onBoardChange($event.value)">
+        <mat-option></mat-option>
+        @for (option of boards; track option) {
+          <mat-option [value]="option.id">{{ option.title }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    </div>
 
-        
-        <div>
-        
-      
-        <!-- Time range -->
-      
-        <mat-form-field>
-          <mat-date-range-input [formGroup]="range" [rangePicker]="picker" 
-                      >
 
-            <input matStartDate [(ngModel)]="startDate" name="start" formControlName="start" placeholder="Нач. дата" (dateChange)="onTimeRangeChange()">
-            <input matEndDate [(ngModel)]="endDate" name="deadline" formControlName="end" placeholder="Кон. дата" (dateChange)="onTimeRangeChange()">
-          </mat-date-range-input>
-          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-          <mat-date-range-picker #picker></mat-date-range-picker>
-        </mat-form-field>
-        
-        
-      </div>
+    <!-- Временной диапазон -->
+  <div class="flex justify-center">
+  
+    <mat-form-field class="w-full max-w-xs dark:bg-gray-900 dark:text-white">
+      <mat-date-range-input [formGroup]="range" [rangePicker]="picker" 
+                  >
+
+        <input matStartDate [(ngModel)]="startDate" name="start" formControlName="start" placeholder="Нач. дата" (dateChange)="onTimeRangeChange()">
+        <input matEndDate [(ngModel)]="endDate" name="deadline" formControlName="end" placeholder="Кон. дата" (dateChange)="onTimeRangeChange()">
+      </mat-date-range-input>
+      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-date-range-picker #picker></mat-date-range-picker>
+    </mat-form-field>
+
     
-      
-    </div>
-<div cdkDropListGroup class="flex justify-content-center min-h-screen overflow-y-auto dark:bg-gray-900 dark:text-white pb-24"> 
-
-    <div class="drag-container dark:bg-gray-900 dark:text-white">
-      <div class="flex flex-row justify-start">
-            <p class="text-4xl leading-tight">To Do</p>
-            <button (click)="addTask('todo')" mat-icon-button aria-label="Example icon button with a vertical three dot icon">
-                <mat-icon>add</mat-icon>
-            </button>
-        </div>
-      
-        <div *ngIf="isDataLoaded"
-    cdkDropList
-    [cdkDropListData]="todo"
-    class="drag-list dark:bg-gray-700 dark:text-white"
-    (cdkDropListDropped)="drop($event)">
-  @for (item of todo; track item) {
-    <div class="drag-box flex justify-between items-start p-2" cdkDrag>
-      <div class="flex items-center">
-        <button (click)="toggleEmojiPicker(item.id)"
-            class="img mr-2"
-            [style.opacity]="item.emoji ? '1' : '0.5'"
-            [style.fontSize.px]="24">
-          {{ item.emoji || '😊' }}
-        </button>
-        <emoji-mart *ngIf="activeEmojiPickerId === item.id"
-            class="emoji-mart"
-            [showPreview]="false"
-            [style]="{ position: 'absolute', zIndex: '1000' }"
-
-            [darkMode]="darkMode"
-            (emojiSelect)="addEmoji($event, item)"
-            title="Choose your emoji"></emoji-mart>
-        <span class="flex-1 max-w-[250px] overflow-hidden truncate break-words">{{ item.title }}</span>
-      </div>
-      <div class="flex space-x-2">
-        <button mat-icon-button (click)="editTask(item)">
-          <mat-icon>edit</mat-icon>
-        </button>
-        <button mat-icon-button [matMenuTriggerFor]="menu">
-          <mat-icon>more_horiz</mat-icon>
-        </button>
-        <mat-menu #menu="matMenu">
-          <button mat-menu-item (click)="deleteTask(item)">
-            <span>Удалить</span>
-          </button>
-          <button mat-menu-item (click)="duplicateTask(item)">
-            <span>Дублировать задание</span>
-          </button>
-          <button mat-menu-item [routerLink]="['/task/', item.id]">
-            <span>Открыть</span>
-          </button>
-        </mat-menu>
-      </div>
-    </div>
-  }
+  </div>
 </div>
 
-   
+<!-- Задачи -->
+<div cdkDropListGroup class="flex flex-col  sm:flex-row justify-center gap-4 min-h-screen p-4 dark:bg-gray-900 dark:text-white">
+  
+  <!-- Колонка To Do -->
+  <div class="drag-container flex-1 max-w-xs sm:max-w-sm lg:max-w-md min-w-0">
+    <div class="flex items-center justify-between mb-4">
+      <p class="text-4xl leading-tight">Done</p>
+      <button (click)="addTask('todo')" mat-icon-button>
+        <mat-icon>add</mat-icon>
+      </button>
     </div>
-    <div class="drag-container">
-      <div class="flex flex-row justify-start">
-        <p class="text-4xl leading-tight">Doing</p>
-            <button (click)="addTask('doing')" mat-icon-button aria-label="Example icon button with a vertical three dot icon">
-                <mat-icon>add</mat-icon>
-            </button>
-        </div>
 
         <div *ngIf="isDataLoaded"
         cdkDropList
-        [cdkDropListData]="doing"
-        class="drag-list dark:bg-gray-700 dark:text-white"
+        [cdkDropListData]="todo"
+        class="drag-list dark:bg-gray-700 dark:text-white max-h-screen"
         (cdkDropListDropped)="drop($event)">
-        @for (item of doing; track item) {
+        @for (item of todo; track item) {
           <div class="drag-box flex justify-between items-center p-2" cdkDrag>
             
               <button (click)="toggleEmojiPicker(item.id)"
               class="img"
-              [style.opacity]="item.emoji ? '1' : '0.5'"
+              [style.opacity]="item.emoji ? '1' : '0.1'"
               [style.fontSize.px]="24">
         {{ item.emoji || '😊' }}
       </button>
@@ -150,8 +95,66 @@
         }
               </div>
         </div>
-    <div class="drag-container">
-      <div class="flex flex-row justify-start">
+
+
+        <div class="drag-container flex-1 max-w-xs sm:max-w-sm lg:max-w-md min-w-0">
+          <div class="flex items-center justify-between mb-4">
+        <p class="text-4xl leading-tight">Doing</p>
+            <button (click)="addTask('doing')" mat-icon-button aria-label="Example icon button with a vertical three dot icon">
+                <mat-icon>add</mat-icon>
+            </button>
+        </div>
+
+        <div *ngIf="isDataLoaded"
+        cdkDropList
+        [cdkDropListData]="doing"
+        class="drag-list dark:bg-gray-700 dark:text-white max-h-screen"
+        (cdkDropListDropped)="drop($event)">
+        @for (item of doing; track item) {
+          <div class="drag-box flex justify-between items-center p-2" cdkDrag>
+            
+              <button (click)="toggleEmojiPicker(item.id)"
+              class="img"
+              [style.opacity]="item.emoji ? '1' : '0.1'"
+              [style.fontSize.px]="24">
+        {{ item.emoji || '😊' }}
+      </button>
+        <emoji-mart *ngIf="activeEmojiPickerId === item.id"
+        class="emoji-mart"
+        [showPreview]="false"
+        [style]="{ position: 'absolute', zIndex: '1000' }"
+
+        [darkMode]="darkMode"
+        (emojiSelect)="addEmoji($event, item)"
+        title="Choose your emoji"></emoji-mart>
+                <span class="flex-1 max-w-[250px] overflow-hidden truncate break-words">{{ item.title }}</span>
+                    <div class="flex space-x-2">
+                      <button mat-icon-button (click)="editTask(item)">
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                      <button mat-icon-button [matMenuTriggerFor]="menu">
+                        <mat-icon>more_horiz</mat-icon>
+                      </button>
+                      <mat-menu #menu="matMenu">
+                        <button mat-menu-item (click)="deleteTask(item)">
+                          <span>Удалить</span>
+                        </button>
+                        <button mat-menu-item (click)="duplicateTask(item)">
+                          <span>Дублировать задание</span>
+                        </button>
+                        <button mat-menu-item [routerLink]="['/task/', item.id]">
+                          <span>Открыть</span>
+                        </button>
+                      </mat-menu>
+                    </div>
+                  </div>
+        }
+              </div>
+        </div>
+
+        <!-- Колонка Done -->
+        <div class="drag-container flex-1 max-w-xs sm:max-w-sm lg:max-w-md min-w-0">
+          <div class="flex items-center justify-between mb-4">
         <p class="text-4xl leading-tight">Done</p>
             <button (click)="addTask('done')" mat-icon-button aria-label="Example icon button with a vertical three dot icon">
                 <mat-icon>add</mat-icon>
@@ -208,5 +211,4 @@
       </div>
     </div>
   </div>
-
-  
+</div>
