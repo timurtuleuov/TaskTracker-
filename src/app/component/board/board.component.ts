@@ -33,7 +33,7 @@ import { CommonModule } from '@angular/common';
 import { PickerComponent } from '@ctrl/ngx-emoji-mart';
 import { MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { AppDateAdapter, APP_DATE_FORMATS } from '../../datepicker custom/customDateFomat';
-
+import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask'
 
 @Component({
   selector: 'app-board',
@@ -41,12 +41,13 @@ import { AppDateAdapter, APP_DATE_FORMATS } from '../../datepicker custom/custom
   imports: [CdkDropListGroup, CdkDropList, CdkDrag, NgbModule, MatIconModule, MatButtonModule, 
     MatMenuModule, MatDialogModule, RouterModule, MatInputModule, MatSelectModule, CommonModule,NgbDatepickerModule,
     MatDatepickerModule, MatNativeDateModule, FormsModule, ReactiveFormsModule,
-    PickerComponent], 
+    PickerComponent, NgxMaskDirective, NgxMaskPipe], 
   templateUrl: './board.component.html',
   styleUrl: './board.component.scss',
   providers: [
     {provide: DateAdapter, useClass: AppDateAdapter},
-    {provide: MAT_DATE_FORMATS, useValue: APP_DATE_FORMATS}
+    {provide: MAT_DATE_FORMATS, useValue: APP_DATE_FORMATS},
+    provideNgxMask(), NgxMaskDirective,
   ]
 })
 export class BoardComponent implements OnInit, AfterViewInit {
@@ -63,7 +64,7 @@ export class BoardComponent implements OnInit, AfterViewInit {
     start: new FormControl<Date | null>(null),
     end: new FormControl<Date | null>(null),
   });
-
+   mask: string = 'd0/M0/0000';
   startDate?: Date
   endDate?: Date
   constructor(
@@ -72,7 +73,8 @@ export class BoardComponent implements OnInit, AfterViewInit {
     private darkModeService: DarkModeService,
     private taskThemeService: TaskThemeService,
     private cdr: ChangeDetectorRef,
-    private zone: NgZone
+    private zone: NgZone,
+    public maskDirective: NgxMaskDirective
   ) {}
 
   toggleEmojiPicker(taskId: string): void {
@@ -87,6 +89,7 @@ export class BoardComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    this.maskDirective.maskExpression = '+0 (000) 000 00 00';
     this.darkModeService.initTheme();
     this.darkModeService.darkMode$.subscribe(darkMode => {
       this.zone.run(() => {

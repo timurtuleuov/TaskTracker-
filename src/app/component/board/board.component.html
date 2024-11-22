@@ -23,10 +23,9 @@
   <div class="flex justify-center">
   
     <mat-form-field class="w-full max-w-xs dark:bg-gray-900 dark:text-white">
-      <mat-date-range-input [formGroup]="range" [rangePicker]="picker" 
-                  >
+      <mat-date-range-input [formGroup]="range" [rangePicker]="picker" >
 
-        <input matStartDate [(ngModel)]="startDate" name="start" formControlName="start" placeholder="Нач. дата" (dateChange)="onTimeRangeChange()">
+        <input matStartDate  [(ngModel)]="startDate" name="start" formControlName="start" placeholder="Нач. дата" (dateChange)="onTimeRangeChange()">
         <input matEndDate [(ngModel)]="endDate" name="deadline" formControlName="end" placeholder="Кон. дата" (dateChange)="onTimeRangeChange()">
       </mat-date-range-input>
       <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
