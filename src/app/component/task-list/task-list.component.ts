@@ -38,7 +38,7 @@ export class TaskListComponent implements OnInit{
     this.dataSource = new MatTableDataSource(this.task);
     
   }
-  displayedColumns: string[] = ['title', 'description', 'start', 'deadline', 'priority', 'status', 'executor', 'operation'];
+  displayedColumns: string[] = ['title', 'description', 'start', 'deadline', 'priority', 'status', 'operation'];
   dataSource!: MatTableDataSource<Task>;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;

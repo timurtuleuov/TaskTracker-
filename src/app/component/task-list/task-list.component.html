@@ -1,93 +1,124 @@
-
-<div class="d-flex justify-content-center align-items-center dark:bg-gray-900 dark:text-white">
-  <form class="flex items-center  mx-auto">
-    <div class="relative w-full">
-      <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-              <svg class="w-4 h-4 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-        </svg>
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900 dark:text-white flex flex-col items-center px-4">
+  <!-- Поиск -->
+  <div class="w-full max-w-6xl mt-4">
+    <form class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
+      <div class="col-span-1 sm:col-span-10 relative">
+        <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+          <svg class="w-5 h-5 text-gray-500 dark:text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+          </svg>
         </div>
-          <input matInput type="text" (keyup)="applyFilter($event)" #input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block  ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Поиск нужного таска" required />
-    
-        </div>
+        <input
+          matInput
+          type="text"
+          (keyup)="applyFilter($event)"
+          #input
+          placeholder="Поиск нужного таска"
+          required
+          class="block w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        />
+      </div>
+      <button class="col-span-1 sm:col-span-2 bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition">
+        Искать
+      </button>
+    </form>
+  </div>
 
-      </form>
-</div>
-  
-  <div class="d-flex flex-column pt-2 w-100 h-screen dark:bg-gray-900 dark:text-white" >
-    <table mat-table [dataSource]="dataSource" matSort class="dark:bg-gray-800">
-  
-
-  
-      <ng-container matColumnDef="title" >
-        <th mat-header-cell *matHeaderCellDef mat-sort-header class="dark:text-white"> Таск </th>
-        <td mat-cell *matCellDef="let row" class="dark:text-white"> {{row.title}} </td>
+  <!-- Таблица -->
+  <div class="w-full max-w-6xl mt-6 overflow-x-auto">
+    <table mat-table [dataSource]="dataSource" matSort class="table-auto w-full dark:bg-gray-800">
+      <!-- Колонки -->
+      <ng-container matColumnDef="title">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="py-2 px-4 text-left text-sm sm:text-base dark:text-white">
+          Таск
+        </th>
+        <td mat-cell *matCellDef="let row" class="py-2 px-4 text-left text-sm sm:text-base dark:text-white">
+          {{ row.title }}
+        </td>
       </ng-container>
-  
+
       <ng-container matColumnDef="description">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header class="dark:text-white"> Описание </th>
-        <td mat-cell *matCellDef="let row" class="dark:text-white"> {{row.description}} </td>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="py-2 px-4 text-left text-sm sm:text-base dark:text-white">
+          Описание
+        </th>
+        <td mat-cell *matCellDef="let row" class="py-2 px-4 text-left text-sm sm:text-base dark:text-white">
+          {{ row.description }}
+        </td>
       </ng-container>
-  
+
       <ng-container matColumnDef="start">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header class="dark:text-white"> Начало</th>
-        <td mat-cell *matCellDef="let row" class="dark:text-white"> {{row.start| date:'fullDate' | translate}} </td>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="py-2 px-4 text-left text-sm sm:text-base dark:text-white">
+          Начало
+        </th>
+        <td mat-cell *matCellDef="let row" class="py-2 px-4 text-left text-sm sm:text-base dark:text-white">
+          {{ row.start | date: 'fullDate' | translate }}
+        </td>
       </ng-container>
 
       <ng-container matColumnDef="deadline">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header class="dark:text-white"> Дедлайн </th>
-        <td mat-cell *matCellDef="let row" class="dark:text-white"> {{row.deadline| date:'fullDate' | translate}} </td>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="py-2 px-4 text-left text-sm sm:text-base dark:text-white">
+          Дедлайн
+        </th>
+        <td mat-cell *matCellDef="let row" class="py-2 px-4 text-left text-sm sm:text-base dark:text-white">
+          {{ row.deadline | date: 'fullDate' | translate }}
+        </td>
       </ng-container>
 
       <ng-container matColumnDef="priority">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header class="dark:text-white"> Приоритет </th>
-        <td mat-cell *matCellDef="let row" class="dark:text-white"> {{row.priority}} </td>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="py-2 px-4 text-left text-sm sm:text-base dark:text-white">
+          Приоритет
+        </th>
+        <td mat-cell *matCellDef="let row" class="py-2 px-4 text-left text-sm sm:text-base dark:text-white">
+          {{ row.priority }}
+        </td>
       </ng-container>
 
       <ng-container matColumnDef="status">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header class="dark:text-white"> Статус </th>
-        <td mat-cell *matCellDef="let row" class="dark:text-white">
-          <ng-container *ngIf="row.status === 'todo'" class="dark:text-white">Нужно сделать</ng-container>
-          <ng-container *ngIf="row.status === 'doing'" class="dark:text-white">В процессе</ng-container>
-          <ng-container *ngIf="row.status === 'done'" class="dark:text-white">Сделано</ng-container>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="py-2 px-4 text-left text-sm sm:text-base dark:text-white">
+          Статус
+        </th>
+        <td mat-cell *matCellDef="let row" class="py-2 px-4 text-left text-sm sm:text-base dark:text-white">
+          <ng-container *ngIf="row.status === 'todo'">Нужно сделать</ng-container>
+          <ng-container *ngIf="row.status === 'doing'">В процессе</ng-container>
+          <ng-container *ngIf="row.status === 'done'">Сделано</ng-container>
         </td>
       </ng-container>
 
-      <ng-container matColumnDef="executor">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header class="dark:text-white"> Исполнитель </th>
-        <td mat-cell *matCellDef="let row" class="dark:text-white"> {{row.executor}} </td>
-      </ng-container>
+      
 
       <ng-container matColumnDef="operation">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header class="dark:text-white"> Действие </th>
-        <td mat-cell *matCellDef="let row"> 
-            <button mat-icon-button [matMenuTriggerFor]="menu">
-                <mat-icon class="dark:text-white">more_horiz</mat-icon>
-            </button>
-            <mat-menu #menu="matMenu" class="dark:bg-gray-800">
-                <button mat-menu-item (click)="deleteTask(row)" class="dark:bg-gray-800 dark:text-white">
-                  
-                  <span>Удалить</span>
-                </button>
-                <button mat-menu-item (click)="duplicateTask(row)" class="dark:bg-gray-800 dark:text-white">
-                  <span>Дублировать задание</span>
-                </button>
-                <button mat-menu-item [routerLink]="['/task/', row.id]" class="dark:bg-gray-800 dark:text-white">
-                  <span>Открыть</span>
-                </button>
-              </mat-menu>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="py-2 px-4 text-left text-sm sm:text-base dark:text-white">
+          Действие
+        </th>
+        <td mat-cell *matCellDef="let row" class="py-2 px-4 text-left text-sm sm:text-base dark:text-white">
+          <button mat-icon-button [matMenuTriggerFor]="menu">
+            <mat-icon class="dark:text-white">more_horiz</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu" class="dark:bg-gray-800">
+            <button mat-menu-item (click)="deleteTask(row)" class="dark:bg-gray-800 dark:text-white">Удалить</button>
+            <button mat-menu-item (click)="duplicateTask(row)" class="dark:bg-gray-800 dark:text-white">Дублировать</button>
+            <button mat-menu-item [routerLink]="['/task/', row.id]" class="dark:bg-gray-800 dark:text-white">Открыть</button>
+          </mat-menu>
         </td>
       </ng-container>
-  
+
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-  
+
       <tr class="mat-row" *matNoDataRow>
-        <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
+        <td class="mat-cell text-center py-4" colspan="7">
+          Нет данных, соответствующих фильтру "{{ input.value }}"
+        </td>
       </tr>
     </table>
-  
-    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users" class="dark:bg-gray-800 dark:text-white"></mat-paginator>
   </div>
-  
-  
+
+  <!-- Пагинация -->
+  <div class="w-full max-w-6xl mt-4">
+    <mat-paginator
+      [pageSizeOptions]="[5, 10, 25, 100]"
+      aria-label="Select page of users"
+      class="dark:bg-gray-800 dark:text-white"
+    ></mat-paginator>
+  </div>
+</div>

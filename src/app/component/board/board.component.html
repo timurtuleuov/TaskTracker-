@@ -127,7 +127,7 @@
         [darkMode]="darkMode"
         (emojiSelect)="addEmoji($event, item)"
         title="Choose your emoji"></emoji-mart>
-                <span class="flex-1 max-w-[250px] overflow-hidden truncate break-words">{{ item.title }}</span>
+                <span class="flex-1 max-w-[250px] min-w-[200px]overflow-hidden truncate break-words">{{ item.title }}</span>
                     <div class="flex space-x-2">
                       <button mat-icon-button (click)="editTask(item)">
                         <mat-icon>edit</mat-icon>

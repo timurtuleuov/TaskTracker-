@@ -5,7 +5,7 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatMenuModule} from '@angular/material/menu';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSelectModule} from '@angular/material/select';
-import {MatNativeDateModule, provideNativeDateAdapter} from '@angular/material/core';
+import {DateAdapter, MatNativeDateModule, provideNativeDateAdapter} from '@angular/material/core';
 import {MatInputModule} from '@angular/material/input';
 import { NgbCalendar, NgbDatepickerModule, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import {
@@ -31,6 +31,8 @@ import { TaskTheme } from '../../interface/task-theme.interface';
 import { TaskThemeService } from '../../service/taskTheme/task-theme.service';
 import { CommonModule } from '@angular/common';
 import { PickerComponent } from '@ctrl/ngx-emoji-mart';
+import { MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
+import { AppDateAdapter, APP_DATE_FORMATS } from '../../datepicker custom/customDateFomat';
 
 
 @Component({
@@ -41,7 +43,11 @@ import { PickerComponent } from '@ctrl/ngx-emoji-mart';
     MatDatepickerModule, MatNativeDateModule, FormsModule, ReactiveFormsModule,
     PickerComponent], 
   templateUrl: './board.component.html',
-  styleUrl: './board.component.scss'
+  styleUrl: './board.component.scss',
+  providers: [
+    {provide: DateAdapter, useClass: AppDateAdapter},
+    {provide: MAT_DATE_FORMATS, useValue: APP_DATE_FORMATS}
+  ]
 })
 export class BoardComponent implements OnInit, AfterViewInit {
   todo!: Task[];
@@ -326,3 +332,4 @@ export class EditTaskDialog {
     this.dialogRef.close(this.data);
   }
 }
+
