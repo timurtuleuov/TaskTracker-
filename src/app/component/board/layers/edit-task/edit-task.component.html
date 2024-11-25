@@ -1,76 +1,87 @@
-<h1 mat-dialog-title class="dark:bg-gray-600 dark:text-white">
-  <p class="dark:text-white">Редактировать задачу</p>
-</h1>
+<div class="dark:bg-gray-800 overflow-hidden flex flex-col max-h-screen">
+  
+  <h1 mat-dialog-title class="dark:bg-gray-700 dark:text-white text-lg font-semibold px-4 py-2">
+    <p class="dark:text-white m-0">Редактировать задачу</p>
+  </h1>
 
-<div mat-dialog-content class="dark:bg-gray-600 dark:text-white">
-  <form class="d-flex flex-column" (keydown.enter)="onSaveClick()" (keyup.esc)="onCancelClick()">
-    
-    <label class="dark:bg-gray-600 dark:text-white">Название таска</label>
-    <mat-form-field class="dark:bg-gray-600 dark:text-white">
-      <mat-label>Task</mat-label>
-      <input matInput [(ngModel)]="data.title" name="title">
-    </mat-form-field>
+  <div mat-dialog-content class="dark:bg-gray-800 dark:text-white px-6 py-4">
+    <form class="space-y-4" (keydown.enter)="onSaveClick()" (keyup.esc)="onCancelClick()">
+      
+      <!-- Task Title -->
+      <div>
+        <label class="block mb-1 text-sm dark:text-white">Название таска</label>
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Task</mat-label>
+          <input matInput [(ngModel)]="data.title" name="title" />
+        </mat-form-field>
+      </div>
 
-    <label class="dark:bg-gray-600 dark:text-white">Важность</label>
-    <mat-form-field class="dark:bg-gray-600 dark:text-white">
-      <mat-label>Важность</mat-label>
-      <mat-select [(ngModel)]="data.priority" name="priority">
-        <mat-option value="1">1</mat-option>
-        <mat-option value="2">2</mat-option>
-        <mat-option value="3">3</mat-option>
-        <mat-option value="4">4</mat-option>
-        <mat-option value="5">5</mat-option>
-      </mat-select>
-    </mat-form-field>
+      <!-- Priority -->
+      <div>
+        <label class="block mb-1 text-sm dark:text-white">Важность</label>
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Важность</mat-label>
+          <mat-select [(ngModel)]="data.priority" name="priority">
+            <mat-option *ngFor="let priority of [1, 2, 3, 4, 5]" [value]="priority">
+              {{ priority }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
 
-    <label class="dark:bg-gray-600 dark:text-white">Статус</label>
-    <mat-form-field class="dark:bg-gray-600 dark:text-white">
-      <mat-label>Статус</mat-label>
-      <mat-select [(ngModel)]="data.status" name="status">
-        <mat-option value="todo">To Do</mat-option>
-        <mat-option value="doing">Doing</mat-option>
-        <mat-option value="done">Done</mat-option>
-      </mat-select>
-    </mat-form-field>
+      <!-- Status -->
+      <div>
+        <label class="block mb-1 text-sm dark:text-white">Статус</label>
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Статус</mat-label>
+          <mat-select [(ngModel)]="data.status" name="status">
+            <mat-option value="todo">To Do</mat-option>
+            <mat-option value="doing">Doing</mat-option>
+            <mat-option value="done">Done</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
 
-    <mat-form-field>
-      <mat-label>Описание таски</mat-label>
-      <textarea matInput [(ngModel)]="data.description" name="description"></textarea>
-    </mat-form-field>
+      <!-- Description -->
+      <div>
+        <label class="block mb-1 text-sm dark:text-white">Описание таски</label>
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Описание</mat-label>
+          <textarea matInput [(ngModel)]="data.description" name="description"></textarea>
+        </mat-form-field>
+      </div>
 
-    <label>Выберите все подходящие тэги</label>
-    <!-- <ng-select [(ngModel)]="selectedTags" [multiple]="true" [addTag]="true" placeholder="Выберите тэги">
-      <ng-option *ngFor="let tag of tags" [value]="tag">{{ tag.title }}</ng-option>
-    </ng-select> -->
-    <ng-select 
-    [(ngModel)]="data.tags"
-    [items]="tags"
-    bindLabel="title"
-    [addTag]="true"
-    [ngModelOptions]="{standalone: true}"
-    labelForId="state"
-    [multiple]="true"
-    placeholder="Выберите тэги"
-    ></ng-select>
-    
-    <mat-form-field>
-      <mat-label>Enter a date range</mat-label>
-      <mat-date-range-input [formGroup]="range" [rangePicker]="picker">
-        <input matStartDate [(ngModel)]="data.start" name="start" formControlName="start" placeholder="Start date">
-        <input matEndDate [(ngModel)]="data.deadline" name="deadline" formControlName="end" placeholder="End date">
-      </mat-date-range-input>
-      <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
-      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-      <mat-date-range-picker #picker></mat-date-range-picker>
+      <!-- Tags -->
+      <div>
+        <label class="block mb-1 text-sm dark:text-white">Выберите все подходящие тэги</label>
+        <ng-select
+          [(ngModel)]="data.tags"
+          [items]="tags"
+          bindLabel="title"
+          [addTag]="true"
+          [ngModelOptions]="{ standalone: true }"
+          [multiple]="true"
+          placeholder="Выберите тэги"
+        ></ng-select>
+      </div>
 
-      <mat-error *ngIf="range.controls.start.hasError('matStartDateInvalid')">Invalid start date</mat-error>
-      <mat-error *ngIf="range.controls.end.hasError('matEndDateInvalid')">Invalid end date</mat-error>
-    </mat-form-field>
-    
-  </form>
-</div>
+      <!-- Date Range -->
+      <div>
+        <label class="block mb-1 text-sm dark:text-white">Диапазон дат</label>
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-date-range-input [formGroup]="range" [rangePicker]="picker">
+            <input matStartDate [(ngModel)]="data.start" name="start" formControlName="start" placeholder="Start date" />
+            <input matEndDate [(ngModel)]="data.deadline" name="deadline" formControlName="end" placeholder="End date" />
+          </mat-date-range-input>
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-date-range-picker #picker></mat-date-range-picker>
+        </mat-form-field>
+      </div>
+    </form>
+  </div>
 
-<div mat-dialog-actions class="dark:bg-gray-600 dark:text-white">
-  <button mat-button (click)="onCancelClick()"><p class="dark:text-white">Отмена</p></button>
-  <button mat-flat-button color="primary" (click)="onSaveClick()">Сохранить</button>
+  <div  class="dark:bg-gray-700 dark:text-white px-4  flex justify-end space-x-2">
+    <button mat-button (click)="onCancelClick()" class="content-center"><p class="dark:text-white m-0">Отмена</p></button>
+    <button mat-flat-button color="primary" (click)="onSaveClick()">Сохранить</button>
+  </div>
 </div>

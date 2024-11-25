@@ -249,7 +249,7 @@ export class BoardComponent implements OnInit, AfterViewInit {
   
     const dialogRef = this.dialog.open(EditTaskComponent, {
       data: newTask,
-      height: '650px',
+      
       width: '800px',
     });
   
@@ -267,7 +267,7 @@ export class BoardComponent implements OnInit, AfterViewInit {
   
     const dialogRef = this.dialog.open(EditTaskComponent, {
       data: taskCopy,
-      height: '650px',
+      
       width: '800px',
     });
   

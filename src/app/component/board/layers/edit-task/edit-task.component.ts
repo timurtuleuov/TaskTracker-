@@ -80,11 +80,6 @@ export class EditTaskComponent implements OnInit {
   }
 
   onSaveClick(): void {
-    console.log(this.selectedTags, "Edit-Task")
-    // Update selectId to reflect the selected tags
-    
-
-    // Save the task with the updated tags
     this.taskService.updateTask(this.data);
 
     this.dialogRef.close(this.data); // Close the dialog after saving
