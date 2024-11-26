@@ -57,3 +57,11 @@
   .task {
     transition: background-color 0.3s ease;
   }
+
+  mat-drawer, 
+  mat-drawer.md-locked-open, 
+  mat-drawer.md-closed.md-locked-open-add-active {
+      min-width: 200px !important;
+      width: 85vw !important;
+      max-width: 400px !important;
+  } 

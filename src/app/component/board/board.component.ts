@@ -35,6 +35,9 @@ import { MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { AppDateAdapter, APP_DATE_FORMATS } from '../../datepicker custom/customDateFomat';
 import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask'
 import {MatChipsModule} from '@angular/material/chips';
+import {MatSidenavModule} from '@angular/material/sidenav';
+
+
 
 @Component({
   selector: 'app-board',
@@ -42,7 +45,7 @@ import {MatChipsModule} from '@angular/material/chips';
   imports: [CdkDropListGroup, CdkDropList, CdkDrag, NgbModule, MatIconModule, MatButtonModule, 
     MatMenuModule, MatDialogModule, RouterModule, MatInputModule, MatSelectModule, CommonModule,NgbDatepickerModule,
     MatDatepickerModule, MatNativeDateModule, FormsModule, ReactiveFormsModule,
-    PickerComponent, NgxMaskDirective, NgxMaskPipe, MatChipsModule], 
+    PickerComponent, NgxMaskDirective, NgxMaskPipe, MatChipsModule, MatSidenavModule], 
   templateUrl: './board.component.html',
   styleUrl: './board.component.scss',
   providers: [
