@@ -162,8 +162,8 @@
                   </div>
                     <div class="flex flex-wrap gap-2 mt-2">
         <mat-chip-set *ngFor="let tag of item.tags">
-          <mat-chip>
-            {{ tag.title }}
+          <mat-chip  [style.backgroundColor]="tagColorMap[tag.title] + ' !important'" >
+            <p class="text-white m-0 drop-shadow-[0_1.4px_1.4px_rgba(0,0,0,0.8)]" > {{ tag.title }}</p>
           </mat-chip>
         </mat-chip-set>
       </div>

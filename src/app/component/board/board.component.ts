@@ -60,6 +60,9 @@ export class BoardComponent implements OnInit, AfterViewInit {
   selectedBoard: string = "Без темы";
   activeEmojiPickerId: string | null = null; 
   darkMode!: boolean;
+  tagColors = ['#F87171', '#60A5FA', '#FBBF24', '#34D399', '#A78BFA', '#F472B6', '#CD5C5C', '#CCCCFF', '#DE3163', '#40E0D0', '#6c3483', '#17a589', '#7fb3d5'];
+  tagColorMap: { [tagTitle: string]: string } = {};
+  
 
   range = new FormGroup({
     start: new FormControl<Date | null>(null),
@@ -79,14 +82,13 @@ export class BoardComponent implements OnInit, AfterViewInit {
   ) {}
 
   toggleEmojiPicker(taskId: string): void {
-    // Закрываем окно эмодзи, если оно уже открыто для данной задачи, иначе открываем
     this.activeEmojiPickerId = this.activeEmojiPickerId === taskId ? null : taskId;
   }
 
   addEmoji(event: any, task: Task): void {
     task.emoji = event.emoji.native; 
     this.taskService.updateTask(task); 
-    this.activeEmojiPickerId = null; // Закрываем окно эмодзи после выбора
+    this.activeEmojiPickerId = null; 
   }
 
   ngOnInit(): void {
@@ -113,7 +115,22 @@ export class BoardComponent implements OnInit, AfterViewInit {
       }
       this.loadTasks();
     });
+    this.assignTagColors();
   }
+
+  assignTagColors(): void {
+    const allTasks = [...this.todo, ...this.doing, ...this.done];
+    allTasks.forEach(task => {
+      if (task.tags && Array.isArray(task.tags)) { 
+        task.tags.forEach(tag => {
+          if (!this.tagColorMap[tag.title]) {
+            this.tagColorMap[tag.title] = this.getRandomColor(); 
+          }
+        });
+      }
+    });
+  }
+  
 
   ngAfterViewInit(): void {
     this.loadTasks();
@@ -148,26 +165,24 @@ export class BoardComponent implements OnInit, AfterViewInit {
       filterByStatus(TaskStatus.Done);
   
       this.isDataLoaded = true;
+      
     }
   }
   filterTasksByDateRange(tasks: Task[], startDate?: Date, endDate?: Date): Task[] {
-    if (!startDate && !endDate) return tasks; // Если диапазон не задан, возвращаем все задачи.
+
+    if (!startDate && !endDate) return tasks; 
 
     return tasks.filter(task => {
-        // Преобразуем поля start и deadline в даты
         const taskStart = task.start ? new Date(task.start) : null;
         const taskEnd = task.deadline ? new Date(task.deadline) : null;
 
-        // Проверяем валидность дат
         const isValidStart = taskStart && !isNaN(taskStart.getTime());
         const isValidEnd = taskEnd && !isNaN(taskEnd.getTime());
 
-        // Если обе даты отсутствуют, исключаем задачу
         if (!isValidStart && !isValidEnd) {
             return false;
         }
 
-        // Условия для фильтрации
         const isWithinStart = startDate && isValidStart ? taskStart >= startDate : true;
         const isWithinEnd = endDate && isValidEnd ? taskEnd <= endDate : true;
 
@@ -184,15 +199,13 @@ export class BoardComponent implements OnInit, AfterViewInit {
   }
 
   onTimeRangeChange(): void {
-    // Извлекаем дату начала и конца из формы
     this.startDate = this.range.value.start ? new Date(this.range.value.start) : undefined;
     this.endDate = this.range.value.end ? new Date(this.range.value.end) : undefined;
   
-    // Сохраняем диапазон в localStorage
     localStorage.setItem("startDate", this.startDate ? this.startDate.toISOString() : '');
     localStorage.setItem("endDate", this.endDate ? this.endDate.toISOString() : '');
   
-    this.loadTasks(); // Обновляем задачи
+    this.loadTasks();
   }
 
   drop(event: CdkDragDrop<Task[]>): void {
@@ -292,6 +305,12 @@ export class BoardComponent implements OnInit, AfterViewInit {
   trackByFn(index: number, item: any): any {
     return item.id; 
   }
+
+  getRandomColor(): string {
+  const randomIndex = Math.floor(Math.random() * this.tagColors.length);
+  return this.tagColors[randomIndex];
+}
+
 
   @HostListener('document:click', ['$event'])
   onClickOutside(event: MouseEvent): void {
