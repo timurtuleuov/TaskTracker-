@@ -307,10 +307,43 @@ export class BoardComponent implements OnInit, AfterViewInit {
   }
 
   getRandomColor(): string {
-  const randomIndex = Math.floor(Math.random() * this.tagColors.length);
-  return this.tagColors[randomIndex];
-}
+    const randomIndex = Math.floor(Math.random() * this.tagColors.length);
+    return this.tagColors[randomIndex];
+  }
 
+  getTaskStyle(task: Task): { [key: string]: string } {
+    const now = new Date().getTime();
+    const deadline = task.deadline ? new Date(task.deadline).getTime() : null;
+  
+    if (!deadline) {
+      return {}; 
+    }
+  
+    const diff = deadline - now; 
+    const daysDiff = diff / (1000 * 60 * 60 * 24);
+  
+  
+    if (daysDiff >= 7) {
+      return {};
+    }
+  
+
+    if (daysDiff <= 0) {
+      return { backgroundColor: 'rgba(255, 0, 0, 0.8)' };
+    }
+  
+
+    const intensity = Math.max(0, Math.min(1, 1 - daysDiff / 7)); 
+    const red = Math.floor(255 * intensity);
+    const green = Math.floor(255 * (1 - intensity));
+    const blue = 0;
+  
+    return {
+      backgroundColor: `rgb(${red}, ${green}, ${blue})`
+    };
+  }
+  
+  
 
   @HostListener('document:click', ['$event'])
   onClickOutside(event: MouseEvent): void {
