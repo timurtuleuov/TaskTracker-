@@ -346,7 +346,60 @@ export class BoardComponent implements OnInit, AfterViewInit {
     };
   }
   
-  
+  exportLocalStorage() {
+    // Получаем все данные из localStorage
+    const localStorageData = { ...localStorage };
+
+    // Преобразуем данные в JSON-строку
+    const dataStr = JSON.stringify(localStorageData, null, 2);
+
+    // Создаем Blob с данными
+    const blob = new Blob([dataStr], { type: 'application/json' });
+
+    // Создаем ссылку для скачивания файла
+    const url = window.URL.createObjectURL(blob);
+
+    // Создаем временный элемент для ссылки
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'localStorage_backup.json';
+
+    // Кликаем на ссылку для скачивания
+    a.click();
+
+    // Освобождаем память
+    window.URL.revokeObjectURL(url);
+  }
+
+  importLocalStorage(event: Event) {
+    const fileInput = event.target as HTMLInputElement;
+    const file = fileInput.files?.[0];
+
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        // Читаем данные из файла
+        const importedData = JSON.parse(reader.result as string);
+
+        // Проверяем, что это объект
+        if (typeof importedData === 'object' && importedData !== null) {
+          // Добавляем данные к существующим
+          for (const key in importedData) {
+            localStorage.setItem(key, importedData[key]);
+          }
+          alert('Данные успешно импортированы в localStorage!');
+        } else {
+          alert('Файл не содержит корректных данных для импорта.');
+        }
+      } catch (error) {
+        alert('Произошла ошибка при обработке файла: ' + error);
+      }
+    };
+
+    reader.readAsText(file);
+  }
 
   @HostListener('document:click', ['$event'])
   onClickOutside(event: MouseEvent): void {

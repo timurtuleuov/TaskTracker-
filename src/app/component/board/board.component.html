@@ -1,8 +1,21 @@
 <mat-drawer-container class=" dark:bg-gray-900 dark:text-white">
   <mat-drawer #drawer class="dark:bg-gray-700 dark:text-white flex justify-center" mode="side">
     <ul>
-      <li>Экспорт</li>
-      <li>Импорт</li>
+      <li><button mat-raised-button color="primary" (click)="exportLocalStorage()">
+        Экспортировать
+      </button></li>
+      <li>
+        <label for="file-upload" class="btn btn-primary">
+          Импортировать localStorage
+        </label>
+        <input
+          type="file"
+          id="file-upload"
+          style="display: none"
+          accept=".json"
+          (change)="importLocalStorage($event)"
+        />
+      </li>
       <li>Сортировка</li>
       
     </ul>
