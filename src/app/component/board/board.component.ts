@@ -34,6 +34,7 @@ import { PickerComponent } from '@ctrl/ngx-emoji-mart';
 import { MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { AppDateAdapter, APP_DATE_FORMATS } from '../../datepicker custom/customDateFomat';
 import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask'
+import {MatChipsModule} from '@angular/material/chips';
 
 @Component({
   selector: 'app-board',
@@ -41,7 +42,7 @@ import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask'
   imports: [CdkDropListGroup, CdkDropList, CdkDrag, NgbModule, MatIconModule, MatButtonModule, 
     MatMenuModule, MatDialogModule, RouterModule, MatInputModule, MatSelectModule, CommonModule,NgbDatepickerModule,
     MatDatepickerModule, MatNativeDateModule, FormsModule, ReactiveFormsModule,
-    PickerComponent, NgxMaskDirective, NgxMaskPipe], 
+    PickerComponent, NgxMaskDirective, NgxMaskPipe, MatChipsModule], 
   templateUrl: './board.component.html',
   styleUrl: './board.component.scss',
   providers: [
@@ -288,6 +289,9 @@ export class BoardComponent implements OnInit, AfterViewInit {
     this.taskService.addTask(duplicatedTask);
   }
 
+  trackByFn(index: number, item: any): any {
+    return item.id; 
+  }
 
   @HostListener('document:click', ['$event'])
   onClickOutside(event: MouseEvent): void {
