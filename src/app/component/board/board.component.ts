@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, HostListener, Inject, NgZone, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, HostListener, inject, Inject, NgZone, OnInit } from '@angular/core';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
@@ -37,7 +37,13 @@ import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask'
 import {MatChipsModule} from '@angular/material/chips';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import { Renderer2 } from '@angular/core';
-
+import {
+  MatSnackBar,
+  MatSnackBarAction,
+  MatSnackBarActions,
+  MatSnackBarLabel,
+  MatSnackBarRef,
+} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-board',
@@ -79,6 +85,22 @@ export class BoardComponent implements OnInit, AfterViewInit {
    "", "Старые", "Новые", "Название", "Приоритет"
     
   ];
+
+  private _snackBar = inject(MatSnackBar);
+
+  durationInSeconds = 3;
+
+  openSnackBar() {
+    this._snackBar.openFromComponent(PizzaPartyAnnotatedComponent, {
+      duration: this.durationInSeconds * 1000,
+    });
+  }
+  openDoneSnackBar() {
+    this._snackBar.openFromComponent(SushiPartyAnnotatedComponent, {
+      duration: this.durationInSeconds * 1000,
+    });
+  }
+
   constructor(
     private dialog: MatDialog,
     private taskService: TaskService,
@@ -259,6 +281,7 @@ export class BoardComponent implements OnInit, AfterViewInit {
         
         thisTask.status = TaskStatus.Done;
         this.showFireworks(thisTask.id)
+        this.openDoneSnackBar()
       }
 
       this.taskService.updateTask(thisTask);
@@ -317,6 +340,7 @@ export class BoardComponent implements OnInit, AfterViewInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.taskService.addTask(result);
+        this.openSnackBar()
       } else {
         console.log('Task creation canceled');
       }
@@ -492,3 +516,74 @@ export class EditTaskDialog {
   }
 }
 
+@Component({
+  selector: 'snack-bar-annotated-component',
+  templateUrl: 'snack-bar-annotated-component.html',
+  styles: `
+    :host {
+      display: flex;
+    }
+
+    .example-pizza-party {
+      color: hotpink;
+    }
+  `,
+  standalone: true,
+  imports: [MatButtonModule, MatSnackBarLabel, MatSnackBarActions, MatSnackBarAction],
+})
+export class PizzaPartyAnnotatedComponent {
+  snackBarRef = inject(MatSnackBarRef);
+}
+
+@Component({
+  selector: 'snack-bar-annotated-done-component',
+  templateUrl: 'snack-bar-annotated-done-component.html',
+  styles: `
+    :host {
+      display: flex;
+    }
+
+    .example-pizza-party {
+      color: hotpink;
+    }
+  `,
+  standalone: true,
+  imports: [MatButtonModule, MatSnackBarLabel, MatSnackBarActions, MatSnackBarAction],
+})
+export class SushiPartyAnnotatedComponent {
+  coolWords = [
+    "Молодец",
+    "Отличная работа",
+    "Гениально",
+    "Так держать",
+    "Ты справился!",
+    "Красавчик",
+    "Фантастика",
+    "Великолепно",
+    "Умничка",
+    "Супер!",
+    "Блестяще",
+    "Мастерски",
+    "Шедевр",
+    "Гордость команды",
+    "Эпично!",
+    "Несравненно",
+    "Потрясающе",
+    "Золотые руки",
+    "Король задач",
+    "Ты сделал это!"
+  ];
+  
+  
+  randomWord: string = ""; // Свойство для хранения случайного слова
+  snackBarRef = inject(MatSnackBarRef);
+
+  constructor() {
+    this.generateRandomWord(); // Генерируем слово при создании компонента
+  }
+
+  generateRandomWord(): void {
+    const randomIndex = Math.floor(Math.random() * this.coolWords.length);
+    this.randomWord = this.coolWords[randomIndex];
+  }
+}
