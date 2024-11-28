@@ -1,5 +1,5 @@
 import { Injectable, Injector } from '@angular/core';
-import { BehaviorSubject, map, Observable } from 'rxjs';
+import { BehaviorSubject, map, Observable, of } from 'rxjs';
 import { TaskTheme } from '../../interface/task-theme.interface';
 import { Task } from '../../interface/task.interface';
 import { TaskService } from '../task.service';
@@ -38,19 +38,21 @@ export class TaskThemeService {
     return this.themes$.asObservable();
   }
 
-  addTheme(newTheme: TaskTheme): void {
+  addTheme(newTheme: TaskTheme): Observable<void> {
     const themes = this.getThemes();
     themes.push(newTheme);
     this.saveThemes(themes);
+    return of(); // Возвращаем пустое Observable для подписки
   }
 
-  deleteTheme(themeId: string): void {
+  deleteTheme(themeId: string): Observable<void> {
     let themes = this.getThemes();
-    themes = themes.filter(theme => theme.id !== themeId);
-    
-    // Используем отложенное внедрение TaskService
+    themes = themes.filter((theme) => theme.id !== themeId);
+
+    // Удаление задач для указанного board
     this.getTaskService().deleteTasksByBoard(themeId);
     this.saveThemes(themes);
+    return of(); // Возвращаем пустое Observable для подписки
   }
 
   updateTheme(updatedTheme: TaskTheme): void {

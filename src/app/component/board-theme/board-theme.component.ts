@@ -13,6 +13,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
+import { TaskService } from '../../service/task.service';
 @Component({
   selector: 'app-board-theme',
   standalone: true,
@@ -21,13 +22,15 @@ import { MatSelectModule } from '@angular/material/select';
   styleUrl: './board-theme.component.scss'
 })
 export class BoardThemeComponent implements OnInit {
-  boards: TaskTheme[] = [];
+  boards: (TaskTheme & { taskCount: number })[] = []; // Добавляем поле taskCount
   selectedBoard?: TaskTheme;
   newBoard = "";
+
   constructor(
-    private darkModeService: DarkModeService, 
+    private darkModeService: DarkModeService,
     private taskThemeService: TaskThemeService,
-    private dialog: MatDialog,
+    private taskService: TaskService, // Подключаем TaskService
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -35,10 +38,13 @@ export class BoardThemeComponent implements OnInit {
 
     // Загрузка бордов
     this.taskThemeService.getAllThemes().subscribe((boards) => {
-      this.boards = boards;
+      this.boards = boards.map((board) => ({ ...board, taskCount: 0 }));
+      // Обновляем подсчет задач для всех бордов
+      this.updateTaskCounts();
+
       // Установим первый борт как выбранный, если есть данные
-      if (boards.length > 0) {
-        this.selectedBoard = boards[0];
+      if (this.boards.length > 0) {
+        this.selectedBoard = this.boards[0];
       }
     });
   }
@@ -46,38 +52,55 @@ export class BoardThemeComponent implements OnInit {
   selectBoard(board: TaskTheme): void {
     this.selectedBoard = board;
     // Здесь можно вызывать обновление задач для выбранного борда
-
-
   }
-  updateBoard(theme: TaskTheme)  {
+
+  updateBoard(theme: TaskTheme): void {
     const dialogRef = this.dialog.open(EditThemeComponent, {
-      data: theme, 
+      data: theme,
       height: '650px',
       width: '800px',
     });
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       console.log(`Dialog result: ${result}`);
     });
   }
-  addBoard() {
+
+  addBoard(): void {
     if (this.newBoard.trim()) {
-      // Логика для добавления новой доски
       const newTheme: TaskTheme = {
         id: uuidv4(),
         title: this.newBoard.trim(),
       };
-      this.taskThemeService.addTheme(newTheme)
-      
-      this.newBoard = '';
+      this.taskThemeService.addTheme(newTheme).subscribe(() => {
+        this.boards.push({ ...newTheme, taskCount: 0 });
+        this.newBoard = '';
+      });
     } else {
       console.error('Название доски не может быть пустым');
     }
-    // 
-  } 
-  deleteBoard(theme: TaskTheme) {
-    this.taskThemeService.deleteTheme(theme.id)
+  }
+
+  deleteBoard(theme: TaskTheme): void {
+    this.taskThemeService.deleteTheme(theme.id).subscribe(() => {
+      this.boards = this.boards.filter((board) => board.id !== theme.id);
+    });
+  }
+
+  /**
+   * Обновляет количество задач для каждого борда.
+   */
+  updateTaskCounts(): void {
+    this.boards.forEach((board) => {
+      this.taskService.getTasksByBoard(board.id).subscribe((tasks) => {
+        const boardToUpdate = this.boards.find((b) => b.id === board.id);
+        if (boardToUpdate) {
+          boardToUpdate.taskCount = tasks.length;
+        }
+      });
+    });
   }
 }
+
 
 @Component({
   selector: 'edit-theme',
