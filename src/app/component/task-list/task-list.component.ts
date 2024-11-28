@@ -66,7 +66,7 @@ export class TaskListComponent implements OnInit{
       description: '',
       start: '',
       deadline: '',
-      priority: '',
+      priority: 0,
       status: TaskStatus.Todo,
       executor: ''
   };

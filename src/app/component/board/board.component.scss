@@ -65,3 +65,40 @@
       width: 85vw !important;
       max-width: 400px !important;
   } 
+/* Firework circle effect */
+.fireworks-gif {
+  position: absolute;
+  top: -130px; /* Базовое значение для больших экранов */
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 30;
+  pointer-events: none;
+  display: none;
+}
+
+/* Для экранов шириной меньше 1024px */
+@media (max-width: 1024px) {
+  .fireworks-gif {
+    top: -130px;
+  }
+}
+
+/* Для экранов шириной меньше 768px */
+@media (max-width: 768px) {
+  .fireworks-gif {
+    top: -110px;
+  }
+}
+
+/* Для экранов шириной меньше 480px (мобильные устройства) */
+@media (max-width: 480px) {
+  .fireworks-gif {
+    top: -90px;
+  }
+}
+
+
+.fire {
+  display: block; /* Показываем, если активировано */
+}

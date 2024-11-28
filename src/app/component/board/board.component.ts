@@ -36,7 +36,7 @@ import { AppDateAdapter, APP_DATE_FORMATS } from '../../datepicker custom/custom
 import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask'
 import {MatChipsModule} from '@angular/material/chips';
 import {MatSidenavModule} from '@angular/material/sidenav';
-
+import { Renderer2 } from '@angular/core';
 
 
 @Component({
@@ -65,7 +65,7 @@ export class BoardComponent implements OnInit, AfterViewInit {
   darkMode!: boolean;
   tagColors = ['#F87171', '#60A5FA', '#FBBF24', '#34D399', '#A78BFA', '#F472B6', '#CD5C5C', '#CCCCFF', '#DE3163', '#40E0D0', '#6c3483', '#17a589', '#7fb3d5'];
   tagColorMap: { [tagTitle: string]: string } = {};
-  
+  fireworksStates: { [key: string]: boolean } = {};
 
   range = new FormGroup({
     start: new FormControl<Date | null>(null),
@@ -74,6 +74,11 @@ export class BoardComponent implements OnInit, AfterViewInit {
    mask: string = 'd0/M0/0000';
   startDate?: Date
   endDate?: Date
+  selectedSort!: string;
+  sorts = [
+   "", "Старые", "Новые", "Название", "Приоритет"
+    
+  ];
   constructor(
     private dialog: MatDialog,
     private taskService: TaskService,
@@ -81,7 +86,8 @@ export class BoardComponent implements OnInit, AfterViewInit {
     private taskThemeService: TaskThemeService,
     private cdr: ChangeDetectorRef,
     private zone: NgZone,
-    public maskDirective: NgxMaskDirective
+    public maskDirective: NgxMaskDirective,
+    private renderer: Renderer2
   ) {}
 
   toggleEmojiPicker(taskId: string): void {
@@ -146,9 +152,9 @@ export class BoardComponent implements OnInit, AfterViewInit {
       this.taskService.getTasksByBoard(boardId).subscribe(tasks => {
         const filteredTasks = this.filterTasksByDateRange(tasks, this.startDate, this.endDate);
   
-        this.todo = filteredTasks.filter(task => task.status === TaskStatus.Todo);
-        this.doing = filteredTasks.filter(task => task.status === TaskStatus.Doing);
-        this.done = filteredTasks.filter(task => task.status === TaskStatus.Done);
+        this.todo = this.sortTasks(filteredTasks.filter(task => task.status === TaskStatus.Todo));
+        this.doing = this.sortTasks(filteredTasks.filter(task => task.status === TaskStatus.Doing));
+        this.done = this.sortTasks(filteredTasks.filter(task => task.status === TaskStatus.Done));
   
         this.isDataLoaded = true;
         this.cdr.detectChanges();
@@ -157,9 +163,9 @@ export class BoardComponent implements OnInit, AfterViewInit {
       const filterByStatus = (status: TaskStatus) =>
         this.taskService.getTasksByStatus(status).subscribe(tasks => {
           const filteredTasks = this.filterTasksByDateRange(tasks, this.startDate, this.endDate);
-          if (status === TaskStatus.Todo) this.todo = filteredTasks;
-          if (status === TaskStatus.Doing) this.doing = filteredTasks;
-          if (status === TaskStatus.Done) this.done = filteredTasks;
+          if (status === TaskStatus.Todo) this.todo = this.sortTasks(filteredTasks);
+          if (status === TaskStatus.Doing) this.doing = this.sortTasks(filteredTasks);
+          if (status === TaskStatus.Done) this.done = this.sortTasks(filteredTasks);
           this.cdr.detectChanges();
         });
   
@@ -168,9 +174,26 @@ export class BoardComponent implements OnInit, AfterViewInit {
       filterByStatus(TaskStatus.Done);
   
       this.isDataLoaded = true;
-      
     }
   }
+  
+  sortTasks(tasks: Task[]): Task[] {
+    if (!this.selectedSort) return tasks;
+  
+    switch (this.selectedSort) {
+      case "Старые":
+        return tasks.sort((a, b) => new Date(a.start!).getTime() - new Date(b.start!).getTime());
+      case "Новые":
+        return tasks.sort((a, b) => new Date(b.start!).getTime() - new Date(a.start!).getTime());
+      case "Название":
+        return tasks.sort((a, b) => a.title.localeCompare(b.title));
+      case "Приоритет":
+        return tasks.sort((a, b) => (a.priority || 0) - (b.priority || 0)); // Предполагается, что priority — число
+      default:
+        return tasks;
+    }
+  }
+  
   filterTasksByDateRange(tasks: Task[], startDate?: Date, endDate?: Date): Task[] {
 
     if (!startDate && !endDate) return tasks; 
@@ -194,7 +217,10 @@ export class BoardComponent implements OnInit, AfterViewInit {
 }
 
   
-  
+  onSortChange(sort: string): void {
+    this.selectedSort = sort;
+    this.loadTasks();
+  }
   onBoardChange(boardId: string): void {
     this.selectedBoard = boardId;
     localStorage.setItem("selectedBoard", this.selectedBoard);
@@ -229,13 +255,31 @@ export class BoardComponent implements OnInit, AfterViewInit {
       } else if (event.container.id === 'cdk-drop-list-1') {
         thisTask.status = TaskStatus.Doing;
       } else if (event.container.id === 'cdk-drop-list-2') {
+        console.log("Firework")
+        
         thisTask.status = TaskStatus.Done;
+        this.showFireworks(thisTask.id)
       }
 
       this.taskService.updateTask(thisTask);
     }
   }
 
+  showFireworks(taskId: string): void {
+    // Устанавливаем флаг для отображения анимации
+    this.fireworksStates[taskId] = true;
+  
+    setTimeout(() => {
+      // Убираем флаг через 2 секунды
+      this.fireworksStates[taskId] = false;
+      this.cdr.detectChanges(); // Обновляем DOM
+    }, 1000); // Длительность показа GIF
+  }
+  
+  
+  
+
+  
   addTask(status: string): void {
     const newTask: Task = {
       id: uuidv4(),
@@ -243,7 +287,7 @@ export class BoardComponent implements OnInit, AfterViewInit {
       description: '',
       start: new Date().toISOString(),
       deadline: '',
-      priority: '',
+      priority: 0,
       status: TaskStatus.Todo,
       executor: '',
       board: this.selectedBoard === "Без темы" ? undefined : { id: this.selectedBoard, title: '' }

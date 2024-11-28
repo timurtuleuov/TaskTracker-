@@ -8,7 +8,7 @@ export interface Task{
     description: string;
     start: string;
     deadline: string;
-    priority: string;
+    priority: number;
     status: TaskStatus;
     executor: string;
     emoji?: string;

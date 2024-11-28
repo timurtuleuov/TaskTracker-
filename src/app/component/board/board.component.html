@@ -1,26 +1,50 @@
 <mat-drawer-container class=" dark:bg-gray-900 dark:text-white">
-  <mat-drawer #drawer class="dark:bg-gray-700 dark:text-white flex justify-center" mode="side">
-    <ul>
-      <li><button mat-raised-button color="primary" (click)="exportLocalStorage()">
+  <mat-drawer
+  #drawer
+  class="dark:bg-gray-800 dark:text-white p-4 flex flex-col items-center justify-center h-full"
+  mode="side"
+>
+  <ul class="space-y-6 w-full max-w-xs">
+    <!-- Экспорт -->
+    <li class="flex justify-center">
+      <button mat-raised-button color="primary" class="w-full" (click)="exportLocalStorage()">
         Экспортировать
-      </button></li>
-      <li>
-        <label for="file-upload" class="btn btn-primary">
-          Импортировать localStorage
-        </label>
-        <input
-          type="file"
-          id="file-upload"
-          style="display: none"
-          accept=".json"
-          (change)="importLocalStorage($event)"
-        />
-      </li>
-      <li>Сортировка</li>
-      
-    </ul>
-    
-  </mat-drawer>
+      </button>
+    </li>
+
+    <!-- Импорт -->
+    <li class="flex justify-center">
+      <label
+        for="file-upload"
+        class="cursor-pointer text-center text-white bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-md text-sm w-full"
+      >
+        Импортировать localStorage
+      </label>
+      <input
+        type="file"
+        id="file-upload"
+        class="hidden"
+        accept=".json"
+        (change)="importLocalStorage($event)"
+      />
+    </li>
+
+    <!-- Сортировка -->
+    <li class="flex flex-col items-center">
+      <p class="text-lg font-semibold mb-2 text-center">Сортировка</p>
+      <mat-form-field appearance="fill" class="w-full">
+        <mat-label>Выберите параметр</mat-label>
+        <mat-select [(ngModel)]="selectedSort" (selectionChange)="onSortChange($event.value)">
+          @for (sort of sorts; track sort) {
+            <mat-option [value]="sort">{{ sort }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </li>
+  </ul>
+</mat-drawer>
+
+  
 <div class="dark:bg-gray-900 dark:text-white w-full">
 
 
@@ -222,7 +246,21 @@
           class="drag-list dark:bg-gray-700 dark:text-white max-h-screen"
           (cdkDropListDropped)="drop($event)">
           @for (item of done; track item) {
-            <div class="drag-box flex flex-col p-2" cdkDrag>
+            <div class="drag-box flex flex-col p-2 relative" cdkDrag>
+               <!-- Контейнер для GIF -->
+               <div
+              class="fireworks-gif relative "
+              id="fireworks-{{ item.id }}"
+              [ngClass]="{ 'fire': fireworksStates[item.id] }"
+            >
+              <img
+                src="assets/gif/fireworks.gif"
+                alt="Fireworks"
+                class="object-top absolute z-50"
+              />
+            </div>
+
+             
               <div class="flex justify-between items-center ">
               
                 <button (click)="toggleEmojiPicker(item.id)"
@@ -267,10 +305,14 @@
                           </mat-chip>
                         </mat-chip-set>
         </div>
+       
                     </div>
+                    
                   
           }
                 </div>
+
+               
           </div>
       </div>
    
