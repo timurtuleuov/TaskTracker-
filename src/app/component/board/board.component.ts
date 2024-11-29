@@ -131,7 +131,12 @@ export class BoardComponent implements OnInit, AfterViewInit {
         this.cdr.detectChanges();
       });
     });
-
+    const savedSort = localStorage.getItem("selectedSort");
+    if (savedSort) {
+      this.selectedSort = savedSort;
+    } else {
+      this.selectedSort = this.sorts[0]; // Устанавливаем значение по умолчанию
+    }
     const savedStartDate = localStorage.getItem("startDate");
   const savedEndDate = localStorage.getItem("endDate");
     this.startDate = savedStartDate ? new Date(savedStartDate) : undefined;
@@ -210,7 +215,7 @@ export class BoardComponent implements OnInit, AfterViewInit {
       case "Название":
         return tasks.sort((a, b) => a.title.localeCompare(b.title));
       case "Приоритет":
-        return tasks.sort((a, b) => (a.priority || 0) - (b.priority || 0)); // Предполагается, что priority — число
+        return tasks.sort((a, b) => (b.priority || 0) - (a.priority || 0)); // Предполагается, что priority — число
       default:
         return tasks;
     }
@@ -239,10 +244,12 @@ export class BoardComponent implements OnInit, AfterViewInit {
 }
 
   
-  onSortChange(sort: string): void {
-    this.selectedSort = sort;
-    this.loadTasks();
-  }
+onSortChange(newSort: string): void {
+  this.selectedSort = newSort;
+  // Сохраняем выбранное значение в localStorage
+  localStorage.setItem("selectedSort", newSort);
+  this.loadTasks()
+}
   onBoardChange(boardId: string): void {
     this.selectedBoard = boardId;
     localStorage.setItem("selectedBoard", this.selectedBoard);
@@ -310,7 +317,7 @@ export class BoardComponent implements OnInit, AfterViewInit {
       description: '',
       start: new Date().toISOString(),
       deadline: '',
-      priority: 0,
+      priority: 1,
       status: TaskStatus.Todo,
       executor: '',
       board: this.selectedBoard === "Без темы" ? undefined : { id: this.selectedBoard, title: '' }
