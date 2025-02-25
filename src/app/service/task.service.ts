@@ -61,15 +61,20 @@ export class TaskService {
     this.saveTasks(tasks);
   }
 
-  updateTask(updatedTask: Task): void {
-    if (updatedTask) { 
-      let tasks = this.getTasks();
-      tasks = tasks.map(task => (task.id === updatedTask.id ? updatedTask : task));
-      this.saveTasks(tasks);
-    } else {
-      console.error('Cannot update task: updatedTask is undefined');
-    }
+  updateTask(updatedTask: Task): Observable<void> {
+    return new Observable<void>((observer) => {
+      if (updatedTask) {
+        let tasks = this.getTasks();
+        tasks = tasks.map(task => (task.id === updatedTask.id ? updatedTask : task));
+        this.saveTasks(tasks);
+        observer.next(); // Сообщаем об успешном завершении
+        observer.complete(); // Завершаем Observable
+      } else {
+        observer.error('Cannot update task: updatedTask is undefined');
+      }
+    });
   }
+  
 
   deleteTasksByBoard(boardId: string): void {
     const tasks = this.getTasks().filter(task => !task.board || task.board.id !== boardId);

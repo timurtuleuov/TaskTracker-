@@ -67,14 +67,14 @@
   } 
 /* Firework circle effect */
 .fireworks-gif {
-  position: absolute;
-  top: -130px; /* Базовое значение для больших экранов */
+  position: absolute; /* Абсолютное позиционирование относительно родителя */
+  top: -140px; /* Базовое значение для больших экранов */
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 30;
-  pointer-events: none;
-  display: none;
+  z-index: 9999; /* Устанавливаем высокий z-index для отображения поверх всего */
+  pointer-events: none; /* Исключаем из взаимодействия с пользователем */
+  display: none; /* Изначально скрыто */
 }
 
 /* Для экранов шириной меньше 1024px */
@@ -97,6 +97,7 @@
     top: -90px;
   }
 }
+
 
 
 .fire {

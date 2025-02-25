@@ -106,7 +106,7 @@ export class BoardComponent implements OnInit, AfterViewInit {
     private taskService: TaskService,
     private darkModeService: DarkModeService,
     private taskThemeService: TaskThemeService,
-    private cdr: ChangeDetectorRef,
+    private cdr: ChangeDetectorRef, 
     private zone: NgZone,
     public maskDirective: NgxMaskDirective,
     private renderer: Renderer2
@@ -131,7 +131,12 @@ export class BoardComponent implements OnInit, AfterViewInit {
         this.cdr.detectChanges();
       });
     });
-
+    const savedSort = localStorage.getItem("selectedSort");
+    if (savedSort) {
+      this.selectedSort = savedSort;
+    } else {
+      this.selectedSort = this.sorts[0]; // Устанавливаем значение по умолчанию
+    }
     const savedStartDate = localStorage.getItem("startDate");
   const savedEndDate = localStorage.getItem("endDate");
     this.startDate = savedStartDate ? new Date(savedStartDate) : undefined;
@@ -210,7 +215,7 @@ export class BoardComponent implements OnInit, AfterViewInit {
       case "Название":
         return tasks.sort((a, b) => a.title.localeCompare(b.title));
       case "Приоритет":
-        return tasks.sort((a, b) => (a.priority || 0) - (b.priority || 0)); // Предполагается, что priority — число
+        return tasks.sort((a, b) => (b.priority || 0) - (a.priority || 0)); // Предполагается, что priority — число
       default:
         return tasks;
     }
@@ -239,10 +244,12 @@ export class BoardComponent implements OnInit, AfterViewInit {
 }
 
   
-  onSortChange(sort: string): void {
-    this.selectedSort = sort;
-    this.loadTasks();
-  }
+onSortChange(newSort: string): void {
+  this.selectedSort = newSort;
+  // Сохраняем выбранное значение в localStorage
+  localStorage.setItem("selectedSort", newSort);
+  this.loadTasks()
+}
   onBoardChange(boardId: string): void {
     this.selectedBoard = boardId;
     localStorage.setItem("selectedBoard", this.selectedBoard);
@@ -260,44 +267,62 @@ export class BoardComponent implements OnInit, AfterViewInit {
   }
 
   drop(event: CdkDragDrop<Task[]>): void {
+    // Проверяем, перетащен ли элемент внутри одного контейнера
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
+      // Перемещаем элемент между контейнерами
       transferArrayItem(
         event.previousContainer.data,
         event.container.data,
         event.previousIndex,
-        event.currentIndex,
+        event.currentIndex
       );
-
+  
       const thisTask = { ...event.container.data[event.currentIndex] };
-
-      if (event.container.id === 'cdk-drop-list-0') {
-        thisTask.status = TaskStatus.Todo;
-      } else if (event.container.id === 'cdk-drop-list-1') {
-        thisTask.status = TaskStatus.Doing;
-      } else if (event.container.id === 'cdk-drop-list-2') {
-        console.log("Firework")
-        
-        thisTask.status = TaskStatus.Done;
-        this.showFireworks(thisTask.id)
-        this.openDoneSnackBar()
+  
+      // Устанавливаем статус задачи на основе ID контейнера
+      switch (event.container.id) {
+        case 'cdk-drop-list-0':
+          thisTask.status = TaskStatus.Todo;
+          break;
+        case 'cdk-drop-list-1':
+          thisTask.status = TaskStatus.Doing;
+          break;
+        case 'cdk-drop-list-2':
+          console.log("Firework");
+          thisTask.status = TaskStatus.Done;
+          this.showFireworks(thisTask.id);
+          this.openDoneSnackBar();
+          break;
+        default:
+          console.warn('Unknown container ID:', event.container.id);
       }
-
-      this.taskService.updateTask(thisTask);
+  
+      // Асинхронное обновление задачи с обработкой ошибок
+      this.taskService.updateTask(thisTask).subscribe({
+        next: () => console.log(`Task ${thisTask.id} updated successfully.`),
+        error: (err) => console.error(`Failed to update task ${thisTask.id}:`, err)
+      });
     }
   }
-
+  
   showFireworks(taskId: string): void {
+    if (!taskId) {
+      console.warn('Invalid task ID for fireworks.');
+      return;
+    }
+  
     // Устанавливаем флаг для отображения анимации
     this.fireworksStates[taskId] = true;
   
+    // Скрываем анимацию через 1 секунду
     setTimeout(() => {
-      // Убираем флаг через 2 секунды
-      this.fireworksStates[taskId] = false;
-      this.cdr.detectChanges(); // Обновляем DOM
-    }, 1000); // Длительность показа GIF
+      delete this.fireworksStates[taskId]; // Убираем значение для освобождения памяти
+      this.cdr.detectChanges(); // Обновляем DOM, если используется ChangeDetectionStrategy.OnPush
+    }, 1000);
   }
+  
   
   
   
@@ -310,7 +335,7 @@ export class BoardComponent implements OnInit, AfterViewInit {
       description: '',
       start: new Date().toISOString(),
       deadline: '',
-      priority: 0,
+      priority: 1,
       status: TaskStatus.Todo,
       executor: '',
       board: this.selectedBoard === "Без темы" ? undefined : { id: this.selectedBoard, title: '' }

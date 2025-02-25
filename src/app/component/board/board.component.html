@@ -116,6 +116,7 @@
 
       <div *ngIf="isDataLoaded"
       cdkDropList
+      [id]="'cdk-drop-list-0'"
       [cdkDropListData]="todo"
       class="drag-list dark:bg-gray-700 dark:text-white max-h-screen"
       (cdkDropListDropped)="drop($event)">
@@ -183,6 +184,7 @@
           <div *ngIf="isDataLoaded"
           cdkDropList
           [cdkDropListData]="doing"
+          [id]="'cdk-drop-list-1'"
           class="drag-list dark:bg-gray-700 dark:text-white max-h-screen"
           (cdkDropListDropped)="drop($event)">
           @for (item of doing; track item) {
@@ -249,6 +251,7 @@
           <div *ngIf="isDataLoaded"
           cdkDropList
           [cdkDropListData]="done"
+          [id]="'cdk-drop-list-2'"
           class="drag-list dark:bg-gray-700 dark:text-white max-h-screen"
           (cdkDropListDropped)="drop($event)">
           @for (item of done; track item) {

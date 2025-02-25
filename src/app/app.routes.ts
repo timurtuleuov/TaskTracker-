@@ -8,10 +8,12 @@ import { BoardThemeComponent } from './component/board-theme/board-theme.compone
 
 export const routes: Routes = [
     {path: '', redirectTo: 'board', pathMatch: 'full' },
+    
     {path: 'board', component: BoardComponent},
     {path: 'timeline', component: TimelineComponent},
     {path: 'task-list', component: TaskListComponent},
     {path: 'task/:slug', component: TaskComponent},
     {path: 'about', component: AboutComponent},
-    {path: 'theme', component: BoardThemeComponent}
+    {path: 'theme', component: BoardThemeComponent},
+    {path: '**', redirectTo: 'board'},
 ];
